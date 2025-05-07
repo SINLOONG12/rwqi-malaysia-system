@@ -11,7 +11,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
-import { ChartBar, LayoutDashboard, Menu } from 'lucide-react';
+import { ChartBar, Droplet, LayoutDashboard, Menu } from 'lucide-react';
 
 const menuItems = [
   {
@@ -19,6 +19,12 @@ const menuItems = [
     label: 'Dashboard',
     icon: <LayoutDashboard className="h-5 w-5" />,
     path: '/',
+  },
+  {
+    id: 'river-monitoring',
+    label: 'River Monitoring',
+    icon: <Droplet className="h-5 w-5" />,
+    path: '/river-monitoring',
   },
   {
     id: 'sales',
@@ -56,7 +62,7 @@ const Sidebar: React.FC = () => {
   return (
     <SidebarComponent>
       <div className="p-4 flex items-center">
-        <span className="text-xl font-bold text-dashboard-indigo">StartOps</span>
+        <span className="text-xl font-bold text-dashboard-indigo">AI River Flow</span>
       </div>
       <SidebarContent>
         <SidebarGroup>
