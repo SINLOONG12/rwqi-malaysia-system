@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { Activity, Droplet, Filter, Trash2, Thermometer, ThermometerSnowflake } from 'lucide-react';
+import { Activity, Droplet, Filter, Trash2, ThermometerSnowflake } from 'lucide-react';
 import { 
   Table, 
   TableBody, 
@@ -13,8 +13,23 @@ import {
 } from "@/components/ui/table";
 import RiverFlowChart from '@/components/river-monitoring/RiverFlowChart';
 import RiverQualityGauge from '@/components/river-monitoring/RiverQualityGauge';
+import RiverQualityDataTable from '@/components/river-monitoring/RiverQualityDataTable';
+import RiverQualityTrendChart from '@/components/river-monitoring/RiverQualityTrendChart';
+import { riverQualityData } from '@/utils/riverData';
 
 const RiverMonitoringPage: React.FC = () => {
+  // Get today's data (using the latest date available)
+  const latestDate = riverQualityData.reduce((latest, current) => {
+    return new Date(current.date) > new Date(latest.date) ? current : latest;
+  }, riverQualityData[0]);
+
+  // Get worst location data from latest date
+  const lowestRwqiLocation = riverQualityData
+    .filter(data => data.date === latestDate.date)
+    .reduce((lowest, current) => {
+      return current.rwqiScore < lowest.rwqiScore ? current : lowest;
+    });
+
   return (
     <div className="space-y-6">
       <div>
@@ -27,7 +42,8 @@ const RiverMonitoringPage: React.FC = () => {
         <Activity className="h-4 w-4" />
         <AlertTitle>Pollution Alert</AlertTitle>
         <AlertDescription>
-          High pollution levels detected at River Location ID: KL-003. Trash accumulation increased by 43% in the last hour.
+          High pollution levels detected at River Location ID: {lowestRwqiLocation.location}. 
+          RWQI Score: {lowestRwqiLocation.rwqiScore.toFixed(2)} - Very Poor Quality.
         </AlertDescription>
       </Alert>
       
@@ -38,9 +54,9 @@ const RiverMonitoringPage: React.FC = () => {
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-sm font-medium text-muted-foreground mb-1">Water Quality Index</p>
-                <h3 className="text-2xl font-bold">76/100</h3>
+                <h3 className="text-2xl font-bold">{latestDate.rwqiScore.toFixed(2)}/1.0</h3>
                 <p className="text-xs font-medium mt-1 flex items-center text-dashboard-orange">
-                  ↓ 5 points since yesterday
+                  ↓ Low RWQI - Action Required
                 </p>
               </div>
               <div className="p-2 rounded-full bg-dashboard-blue">
@@ -55,7 +71,7 @@ const RiverMonitoringPage: React.FC = () => {
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-sm font-medium text-muted-foreground mb-1">pH Level</p>
-                <h3 className="text-2xl font-bold">6.8</h3>
+                <h3 className="text-2xl font-bold">{latestDate.pH.toFixed(1)}</h3>
                 <p className="text-xs font-medium mt-1 flex items-center text-dashboard-green">
                   ↑ Normal range
                 </p>
@@ -72,9 +88,9 @@ const RiverMonitoringPage: React.FC = () => {
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-sm font-medium text-muted-foreground mb-1">Trash Detected</p>
-                <h3 className="text-2xl font-bold">27 items</h3>
+                <h3 className="text-2xl font-bold">{latestDate.trashDetected}/10</h3>
                 <p className="text-xs font-medium mt-1 flex items-center text-dashboard-red">
-                  ↑ 12 items since yesterday
+                  ↑ High level - Cleanup needed
                 </p>
               </div>
               <div className="p-2 rounded-full bg-dashboard-red">
@@ -88,10 +104,10 @@ const RiverMonitoringPage: React.FC = () => {
           <CardContent className="p-6">
             <div className="flex justify-between items-start">
               <div>
-                <p className="text-sm font-medium text-muted-foreground mb-1">Water Temperature</p>
-                <h3 className="text-2xl font-bold">24°C</h3>
-                <p className="text-xs font-medium mt-1 flex items-center text-dashboard-blue">
-                  ↓ 2°C since yesterday
+                <p className="text-sm font-medium text-muted-foreground mb-1">Dissolved Oxygen</p>
+                <h3 className="text-2xl font-bold">{latestDate.dissolvedOxygen.toFixed(1)} mg/L</h3>
+                <p className="text-xs font-medium mt-1 flex items-center text-dashboard-red">
+                  ↓ Low level - Critical for aquatic life
                 </p>
               </div>
               <div className="p-2 rounded-full bg-dashboard-purple">
@@ -107,8 +123,14 @@ const RiverMonitoringPage: React.FC = () => {
         <RiverFlowChart />
         <RiverQualityGauge />
       </div>
+      
+      {/* Trend Chart */}
+      <RiverQualityTrendChart />
 
-      {/* Detailed Data Table */}
+      {/* Data Table */}
+      <RiverQualityDataTable />
+
+      {/* Monitoring Stations Table */}
       <Card>
         <CardHeader>
           <CardTitle>River Monitoring Stations</CardTitle>
@@ -129,23 +151,23 @@ const RiverMonitoringPage: React.FC = () => {
               <TableRow>
                 <TableCell>KL-001</TableCell>
                 <TableCell>Klang River - North</TableCell>
-                <TableCell>82/100</TableCell>
+                <TableCell>0.43</TableCell>
                 <TableCell>1.8 m³/s</TableCell>
-                <TableCell>Low</TableCell>
-                <TableCell><span className="px-2 py-1 rounded-full bg-green-100 text-green-800 text-xs">Normal</span></TableCell>
+                <TableCell>High</TableCell>
+                <TableCell><span className="px-2 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs">Warning</span></TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>KL-002</TableCell>
                 <TableCell>Klang River - Central</TableCell>
-                <TableCell>78/100</TableCell>
+                <TableCell>0.39</TableCell>
                 <TableCell>2.2 m³/s</TableCell>
-                <TableCell>Medium</TableCell>
-                <TableCell><span className="px-2 py-1 rounded-full bg-green-100 text-green-800 text-xs">Normal</span></TableCell>
+                <TableCell>High</TableCell>
+                <TableCell><span className="px-2 py-1 rounded-full bg-red-100 text-red-800 text-xs">Alert</span></TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>KL-003</TableCell>
                 <TableCell>Klang River - South</TableCell>
-                <TableCell>54/100</TableCell>
+                <TableCell>0.35</TableCell>
                 <TableCell>1.3 m³/s</TableCell>
                 <TableCell>High</TableCell>
                 <TableCell><span className="px-2 py-1 rounded-full bg-red-100 text-red-800 text-xs">Alert</span></TableCell>
@@ -153,7 +175,7 @@ const RiverMonitoringPage: React.FC = () => {
               <TableRow>
                 <TableCell>GC-001</TableCell>
                 <TableCell>Gombak River</TableCell>
-                <TableCell>71/100</TableCell>
+                <TableCell>0.41</TableCell>
                 <TableCell>0.9 m³/s</TableCell>
                 <TableCell>Medium</TableCell>
                 <TableCell><span className="px-2 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs">Warning</span></TableCell>
@@ -161,7 +183,7 @@ const RiverMonitoringPage: React.FC = () => {
               <TableRow>
                 <TableCell>BT-001</TableCell>
                 <TableCell>Batu River</TableCell>
-                <TableCell>68/100</TableCell>
+                <TableCell>0.38</TableCell>
                 <TableCell>1.1 m³/s</TableCell>
                 <TableCell>Medium</TableCell>
                 <TableCell><span className="px-2 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs">Warning</span></TableCell>
