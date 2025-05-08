@@ -11,7 +11,7 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
-import { ChartBar, LayoutDashboard, Menu, Droplet, WaveIcon } from 'lucide-react';
+import { ChartBar, LayoutDashboard, Menu, Droplet, Waves } from 'lucide-react';
 
 const menuItems = [
   {
