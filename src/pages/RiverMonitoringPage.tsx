@@ -33,8 +33,8 @@ const RiverMonitoringPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">AI River Flow System</h1>
-        <p className="text-muted-foreground">Real-time monitoring of river conditions and pollution detection.</p>
+        <h1 className="text-3xl font-bold">Malaysian River Water Quality Index</h1>
+        <p className="text-muted-foreground">Real-time monitoring of river conditions and pollution detection across Malaysia.</p>
       </div>
 
       {/* Alert for critical conditions */}
@@ -42,7 +42,7 @@ const RiverMonitoringPage: React.FC = () => {
         <Activity className="h-4 w-4" />
         <AlertTitle>Pollution Alert</AlertTitle>
         <AlertDescription>
-          High pollution levels detected at River Location ID: {lowestRwqiLocation.location}. 
+          High pollution levels detected at {lowestRwqiLocation.location}. 
           RWQI Score: {lowestRwqiLocation.rwqiScore.toFixed(2)} - Very Poor Quality.
         </AlertDescription>
       </Alert>
@@ -133,14 +133,14 @@ const RiverMonitoringPage: React.FC = () => {
       {/* Monitoring Stations Table */}
       <Card>
         <CardHeader>
-          <CardTitle>River Monitoring Stations</CardTitle>
+          <CardTitle>Malaysian Rivers Monitoring Stations</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Station ID</TableHead>
-                <TableHead>Location</TableHead>
+                <TableHead>River Name</TableHead>
                 <TableHead>RWQI Score</TableHead>
                 <TableHead>Flow Rate</TableHead>
                 <TableHead>Trash Level</TableHead>
@@ -150,43 +150,43 @@ const RiverMonitoringPage: React.FC = () => {
             <TableBody>
               <TableRow>
                 <TableCell>KL-001</TableCell>
-                <TableCell>Klang River - North</TableCell>
+                <TableCell>Sungai Klang (Kuala Lumpur)</TableCell>
                 <TableCell>0.43</TableCell>
                 <TableCell>1.8 m³/s</TableCell>
                 <TableCell>High</TableCell>
                 <TableCell><span className="px-2 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs">Warning</span></TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>KL-002</TableCell>
-                <TableCell>Klang River - Central</TableCell>
+                <TableCell>GM-001</TableCell>
+                <TableCell>Sungai Gombak (Kuala Lumpur)</TableCell>
                 <TableCell>0.39</TableCell>
                 <TableCell>2.2 m³/s</TableCell>
                 <TableCell>High</TableCell>
                 <TableCell><span className="px-2 py-1 rounded-full bg-red-100 text-red-800 text-xs">Alert</span></TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>KL-003</TableCell>
-                <TableCell>Klang River - South</TableCell>
+                <TableCell>JR-001</TableCell>
+                <TableCell>Sungai Juru (Penang)</TableCell>
                 <TableCell>0.35</TableCell>
                 <TableCell>1.3 m³/s</TableCell>
                 <TableCell>High</TableCell>
                 <TableCell><span className="px-2 py-1 rounded-full bg-red-100 text-red-800 text-xs">Alert</span></TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>GC-001</TableCell>
-                <TableCell>Gombak River</TableCell>
-                <TableCell>0.41</TableCell>
+                <TableCell>LG-001</TableCell>
+                <TableCell>Sungai Langat (Selangor)</TableCell>
+                <TableCell>0.44</TableCell>
                 <TableCell>0.9 m³/s</TableCell>
                 <TableCell>Medium</TableCell>
                 <TableCell><span className="px-2 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs">Warning</span></TableCell>
               </TableRow>
               <TableRow>
-                <TableCell>BT-001</TableCell>
-                <TableCell>Batu River</TableCell>
-                <TableCell>0.38</TableCell>
+                <TableCell>PH-001</TableCell>
+                <TableCell>Sungai Pahang (Pahang)</TableCell>
+                <TableCell>0.69</TableCell>
                 <TableCell>1.1 m³/s</TableCell>
-                <TableCell>Medium</TableCell>
-                <TableCell><span className="px-2 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs">Warning</span></TableCell>
+                <TableCell>Low</TableCell>
+                <TableCell><span className="px-2 py-1 rounded-full bg-green-100 text-green-800 text-xs">Good</span></TableCell>
               </TableRow>
             </TableBody>
           </Table>

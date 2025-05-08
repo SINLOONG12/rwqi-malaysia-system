@@ -27,6 +27,12 @@ const menuItems = [
     path: '/river-monitoring',
   },
   {
+    id: 'water-quality',
+    label: 'Water Quality',
+    icon: <Waves className="h-5 w-5" />,
+    path: '/river-monitoring',
+  },
+  {
     id: 'sales',
     label: 'Sales',
     icon: <ChartBar className="h-5 w-5" />,
@@ -62,7 +68,7 @@ const Sidebar: React.FC = () => {
   return (
     <SidebarComponent>
       <div className="p-4 flex items-center">
-        <span className="text-xl font-bold text-dashboard-indigo">AI River Flow</span>
+        <span className="text-xl font-bold text-dashboard-indigo">Malaysian River Quality</span>
       </div>
       <SidebarContent>
         <SidebarGroup>
