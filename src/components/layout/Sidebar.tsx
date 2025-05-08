@@ -11,7 +11,17 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
 } from "@/components/ui/sidebar";
-import { ChartBar, LayoutDashboard, Menu, Droplet, Waves } from 'lucide-react';
+import { 
+  ChartBar, 
+  LayoutDashboard, 
+  Menu, 
+  Droplet, 
+  Waves, 
+  Camera, 
+  Database,
+  Upload,
+  CloudRain
+} from 'lucide-react';
 
 const menuItems = [
   {
@@ -25,6 +35,12 @@ const menuItems = [
     label: 'River Monitoring',
     icon: <Droplet className="h-5 w-5" />,
     path: '/river-monitoring',
+  },
+  {
+    id: 'data-collection',
+    label: 'Data Collection',
+    icon: <Database className="h-5 w-5" />,
+    path: '/data-collection',
   },
   {
     id: 'water-quality',
