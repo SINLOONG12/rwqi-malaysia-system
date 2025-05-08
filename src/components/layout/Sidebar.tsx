@@ -19,7 +19,9 @@ import {
   Waves, 
   Camera, 
   Database,
-  Upload,
+  Map,
+  AlertTriangle,
+  Users,
   CloudRain
 } from 'lucide-react';
 
