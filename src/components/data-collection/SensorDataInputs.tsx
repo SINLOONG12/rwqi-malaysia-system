@@ -239,7 +239,10 @@ const SensorDataInputs: React.FC = () => {
         </CardHeader>
         <CardContent>
           {anomaly?.isAnomaly && (
-            <Alert variant={anomaly.severity === 'high' ? "destructive" : "warning"} className="mb-4">
+            <Alert 
+              variant={anomaly.severity === 'high' ? "destructive" : "default"} 
+              className={`mb-4 ${anomaly.severity !== 'high' ? 'border-yellow-500 text-yellow-800 dark:text-yellow-300' : ''}`}
+            >
               <AlertCircle className="h-4 w-4" />
               <AlertTitle>Water Quality Alert</AlertTitle>
               <AlertDescription>{anomaly.message}</AlertDescription>
