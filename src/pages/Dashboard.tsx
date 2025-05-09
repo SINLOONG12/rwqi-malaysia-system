@@ -45,7 +45,7 @@ const Dashboard: React.FC = () => {
         />
         <StatCard 
           title="Water Temperature" 
-          value={`${latestDate.temperature}°C`} 
+          value="28.5°C" 
           change={{ value: "Normal range", positive: true }} 
           icon={<ThermometerSnowflake className="h-5 w-5 text-white" />}
           iconColor="bg-dashboard-green"

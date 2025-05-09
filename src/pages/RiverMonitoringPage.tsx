@@ -1,41 +1,20 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  Activity, 
-  Droplet, 
-  Filter, 
-  Trash2, 
-  ThermometerSnowflake,
+  ChartBar,
   Map,
   Bell,
-  AlertTriangle,
-  Users,
-  ChartBar,
+  Database,
   History,
-  Database
 } from 'lucide-react';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
-import RiverFlowChart from '@/components/river-monitoring/RiverFlowChart';
-import RiverQualityGauge from '@/components/river-monitoring/RiverQualityGauge';
-import RiverQualityDataTable from '@/components/river-monitoring/RiverQualityDataTable';
-import RiverQualityTrendChart from '@/components/river-monitoring/RiverQualityTrendChart';
-import RiverMonitoringMap from '@/components/river-monitoring/RiverMonitoringMap';
-import PredictiveAnalytics from '@/components/river-monitoring/PredictiveAnalytics';
-import AlertsNotifications from '@/components/river-monitoring/AlertsNotifications';
 import { riverQualityData } from '@/utils/riverData';
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import RoleSelector from '@/components/river-monitoring/RoleSelector';
+import OverviewTab from '@/components/river-monitoring/OverviewTab';
+import RiverMonitoringMap from '@/components/river-monitoring/RiverMonitoringMap';
+import AlertsNotifications from '@/components/river-monitoring/AlertsNotifications';
+import PredictiveAnalytics from '@/components/river-monitoring/PredictiveAnalytics';
 
 const RiverMonitoringPage: React.FC = () => {
   const { toast } = useToast();
@@ -78,32 +57,7 @@ const RiverMonitoringPage: React.FC = () => {
           <p className="text-muted-foreground">Real-time monitoring of river conditions and pollution detection across Malaysia.</p>
         </div>
         
-        <div className="flex items-center space-x-2 mt-4 md:mt-0">
-          <div className="text-sm text-muted-foreground mr-2">View as:</div>
-          <div className="flex border rounded-lg overflow-hidden">
-            <Button 
-              variant={userRole === "government" ? "default" : "outline"} 
-              className="rounded-none border-0"
-              onClick={() => setUserRole("government")}
-            >
-              Government
-            </Button>
-            <Button 
-              variant={userRole === "cleanup" ? "default" : "outline"} 
-              className="rounded-none border-0 border-x"
-              onClick={() => setUserRole("cleanup")}
-            >
-              Cleanup Team
-            </Button>
-            <Button 
-              variant={userRole === "public" ? "default" : "outline"} 
-              className="rounded-none border-0"
-              onClick={() => setUserRole("public")}
-            >
-              Public
-            </Button>
-          </div>
-        </div>
+        <RoleSelector userRole={userRole} setUserRole={setUserRole} />
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -131,203 +85,14 @@ const RiverMonitoringPage: React.FC = () => {
         </TabsList>
         
         {/* Overview Tab Content */}
-        <TabsContent value="overview" className="space-y-6">
-          {/* Alert for critical conditions */}
-          <Alert variant="destructive" className="border-dashboard-red">
-            <Activity className="h-4 w-4" />
-            <AlertTitle>Pollution Alert</AlertTitle>
-            <AlertDescription>
-              High pollution levels detected at {lowestRwqiLocation.location}. 
-              RWQI Score: {lowestRwqiLocation.rwqiScore.toFixed(2)} - Very Poor Quality.
-              {userRole === "cleanup" && (
-                <div className="mt-2">
-                  <Badge className="bg-destructive mr-2">Priority: High</Badge>
-                  <Badge variant="outline" className="border-destructive text-destructive">Immediate Action Required</Badge>
-                </div>
-              )}
-            </AlertDescription>
-          </Alert>
-          
-          {/* Key Metrics */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground mb-1">Water Quality Index</p>
-                    <h3 className="text-2xl font-bold">{latestDate.rwqiScore.toFixed(2)}/1.0</h3>
-                    <p className="text-xs font-medium mt-1 flex items-center text-dashboard-orange">
-                      ↓ Low RWQI - Action Required
-                    </p>
-                  </div>
-                  <div className="p-2 rounded-full bg-dashboard-blue">
-                    <Droplet className="h-5 w-5 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground mb-1">pH Level</p>
-                    <h3 className="text-2xl font-bold">{latestDate.pH.toFixed(1)}</h3>
-                    <p className="text-xs font-medium mt-1 flex items-center text-dashboard-green">
-                      ↑ Normal range
-                    </p>
-                  </div>
-                  <div className="p-2 rounded-full bg-dashboard-green">
-                    <Filter className="h-5 w-5 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground mb-1">Trash Detected</p>
-                    <h3 className="text-2xl font-bold">{latestDate.trashDetected}/10</h3>
-                    <p className="text-xs font-medium mt-1 flex items-center text-dashboard-red">
-                      ↑ High level - Cleanup needed
-                    </p>
-                  </div>
-                  <div className="p-2 rounded-full bg-dashboard-red">
-                    <Trash2 className="h-5 w-5 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground mb-1">Dissolved Oxygen</p>
-                    <h3 className="text-2xl font-bold">{latestDate.dissolvedOxygen.toFixed(1)} mg/L</h3>
-                    <p className="text-xs font-medium mt-1 flex items-center text-dashboard-red">
-                      ↓ Low level - Critical for aquatic life
-                    </p>
-                  </div>
-                  <div className="p-2 rounded-full bg-dashboard-purple">
-                    <ThermometerSnowflake className="h-5 w-5 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Charts Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <RiverFlowChart />
-            <RiverQualityGauge />
-          </div>
-          
-          {/* Trend Chart */}
-          <RiverQualityTrendChart />
-
-          {/* Role-specific content */}
-          {userRole === "government" && (
-            <Card className="mt-6">
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <AlertTriangle className="h-5 w-5 mr-2 text-dashboard-orange" />
-                  Policy Compliance Summary
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center pb-2 border-b">
-                    <span className="font-medium">National Water Quality Standards</span>
-                    <Badge variant="destructive">4 Rivers Non-Compliant</Badge>
-                  </div>
-                  <div className="flex justify-between items-center pb-2 border-b">
-                    <span className="font-medium">Clean Rivers Program Target</span>
-                    <Badge variant="outline" className="text-dashboard-orange border-dashboard-orange">62% Achieved</Badge>
-                  </div>
-                  <div className="flex justify-between items-center pb-2 border-b">
-                    <span className="font-medium">Annual Improvement Rate</span>
-                    <Badge variant="outline" className="text-dashboard-green border-dashboard-green">+5.3% YoY</Badge>
-                  </div>
-                  <Button onClick={handleDownloadReport} className="mt-2">Download Full Compliance Report</Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {userRole === "cleanup" && (
-            <Card className="mt-6">
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Users className="h-5 w-5 mr-2 text-dashboard-blue" />
-                  Today's Cleanup Priorities
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center pb-2 border-b">
-                    <div>
-                      <span className="font-medium block">Sungai Juru (Penang)</span>
-                      <span className="text-sm text-muted-foreground">Heavy plastic pollution, oil traces</span>
-                    </div>
-                    <Badge variant="destructive">High Priority</Badge>
-                  </div>
-                  <div className="flex justify-between items-center pb-2 border-b">
-                    <div>
-                      <span className="font-medium block">Sungai Gombak (KL)</span>
-                      <span className="text-sm text-muted-foreground">Urban waste accumulation, rising ammonia</span>
-                    </div>
-                    <Badge variant="outline" className="text-dashboard-orange border-dashboard-orange">Medium Priority</Badge>
-                  </div>
-                  <div className="flex justify-between items-center pb-2 border-b">
-                    <div>
-                      <span className="font-medium block">Sungai Langat (Selangor)</span>
-                      <span className="text-sm text-muted-foreground">Industrial discharge, degrading pH</span>
-                    </div>
-                    <Badge variant="outline" className="text-dashboard-orange border-dashboard-orange">Medium Priority</Badge>
-                  </div>
-                  <Button className="mt-2 bg-dashboard-blue hover:bg-dashboard-blue/90">View Detailed Cleanup Plan</Button>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {userRole === "public" && (
-            <Card className="mt-6">
-              <CardHeader>
-                <CardTitle>Citizen Engagement</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <p>Help keep our rivers clean by reporting pollution incidents and participating in community cleanup events.</p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Button variant="outline" className="flex items-center justify-center">
-                      <AlertTriangle className="h-4 w-4 mr-2" />
-                      Report River Pollution
-                    </Button>
-                    <Button variant="outline" className="flex items-center justify-center">
-                      <Users className="h-4 w-4 mr-2" />
-                      Join Cleanup Events
-                    </Button>
-                  </div>
-                  <div className="mt-4 p-4 bg-muted rounded-md">
-                    <h4 className="font-medium mb-2">Improve Our System</h4>
-                    <p className="text-sm mb-2">How accurate was the water quality data for your area?</p>
-                    <div className="flex space-x-2">
-                      <Button size="sm" variant="outline" onClick={handleSubmitFeedback}>Very Accurate</Button>
-                      <Button size="sm" variant="outline" onClick={handleSubmitFeedback}>Somewhat Accurate</Button>
-                      <Button size="sm" variant="outline" onClick={handleSubmitFeedback}>Not Accurate</Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Monitoring Stations Table */}
-          <RiverQualityDataTable />
+        <TabsContent value="overview">
+          <OverviewTab 
+            userRole={userRole}
+            lowestRwqiLocation={lowestRwqiLocation}
+            latestDate={latestDate}
+            onDownloadReport={handleDownloadReport}
+            onSubmitFeedback={handleSubmitFeedback}
+          />
         </TabsContent>
         
         {/* Map Tab Content */}
@@ -347,29 +112,36 @@ const RiverMonitoringPage: React.FC = () => {
         
         {/* Historical Data Tab Content */}
         <TabsContent value="historical">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <History className="h-5 w-5 mr-2" />
-                Historical River Quality Trends
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="p-4 bg-muted rounded-md">
-                <h3 className="font-medium mb-2">Data Access Options</h3>
-                <div className="flex flex-wrap gap-2">
-                  <Button size="sm" onClick={handleDownloadReport}>Download CSV</Button>
-                  <Button size="sm" onClick={handleDownloadReport}>Download PDF Report</Button>
-                  <Button size="sm" variant="outline">API Access</Button>
-                  <Button size="sm" variant="outline">Raw Sensor Data</Button>
-                </div>
-              </div>
-              <RiverQualityTrendChart />
-              <RiverQualityDataTable />
-            </CardContent>
-          </Card>
+          <HistoricalDataTab onDownloadReport={handleDownloadReport} />
         </TabsContent>
       </Tabs>
+    </div>
+  );
+};
+
+// We'll create this component inline since it's relatively simple
+const HistoricalDataTab: React.FC<{ onDownloadReport: () => void }> = ({ onDownloadReport }) => {
+  return (
+    <div className="card">
+      <div className="card-header">
+        <h3 className="flex items-center text-2xl font-semibold leading-none tracking-tight">
+          <History className="h-5 w-5 mr-2" />
+          Historical River Quality Trends
+        </h3>
+      </div>
+      <div className="card-content p-6 space-y-6">
+        <div className="p-4 bg-muted rounded-md">
+          <h3 className="font-medium mb-2">Data Access Options</h3>
+          <div className="flex flex-wrap gap-2">
+            <button className="px-3 py-1 bg-primary text-primary-foreground rounded text-sm" onClick={onDownloadReport}>Download CSV</button>
+            <button className="px-3 py-1 bg-primary text-primary-foreground rounded text-sm" onClick={onDownloadReport}>Download PDF Report</button>
+            <button className="px-3 py-1 border rounded text-sm">API Access</button>
+            <button className="px-3 py-1 border rounded text-sm">Raw Sensor Data</button>
+          </div>
+        </div>
+        <RiverQualityTrendChart />
+        <RiverQualityDataTable />
+      </div>
     </div>
   );
 };
