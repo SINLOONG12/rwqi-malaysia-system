@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
@@ -15,6 +14,8 @@ import OverviewTab from '@/components/river-monitoring/OverviewTab';
 import RiverMonitoringMap from '@/components/river-monitoring/RiverMonitoringMap';
 import AlertsNotifications from '@/components/river-monitoring/AlertsNotifications';
 import PredictiveAnalytics from '@/components/river-monitoring/PredictiveAnalytics';
+import RiverQualityTrendChart from '@/components/river-monitoring/RiverQualityTrendChart';
+import RiverQualityDataTable from '@/components/river-monitoring/RiverQualityDataTable';
 
 const RiverMonitoringPage: React.FC = () => {
   const { toast } = useToast();
@@ -119,7 +120,7 @@ const RiverMonitoringPage: React.FC = () => {
   );
 };
 
-// We'll create this component inline since it's relatively simple
+// We'll keep the HistoricalDataTab component inline since it's relatively simple
 const HistoricalDataTab: React.FC<{ onDownloadReport: () => void }> = ({ onDownloadReport }) => {
   return (
     <div className="card">
