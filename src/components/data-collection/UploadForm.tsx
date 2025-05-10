@@ -25,6 +25,12 @@ const UploadForm: React.FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setUploadFile(e.target.files[0]);
+      
+      // Show a toast notification confirming the file was selected
+      toast({
+        title: "File Selected",
+        description: `Selected file: ${e.target.files[0].name} (${(e.target.files[0].size / 1024).toFixed(1)} KB)`,
+      });
     }
   };
 
@@ -82,6 +88,24 @@ const UploadForm: React.FC = () => {
       documentInputRef.current.click();
     }
   };
+  
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+  
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      setUploadFile(e.dataTransfer.files[0]);
+      toast({
+        title: "File Dropped",
+        description: `Selected file: ${e.dataTransfer.files[0].name}`,
+      });
+    }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -108,7 +132,11 @@ const UploadForm: React.FC = () => {
           </Button>
         </div>
         
-        <div className="mt-4 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg p-6 flex flex-col items-center justify-center">
+        <div 
+          className="mt-4 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg p-6 flex flex-col items-center justify-center"
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+        >
           {uploadFile ? (
             <div className="text-center">
               <CheckCircle className="mx-auto h-8 w-8 text-green-500 mb-2" />
@@ -171,6 +199,7 @@ const UploadForm: React.FC = () => {
               variant="outline" 
               size="icon"
               onClick={handleGetLocation}
+              title="Get current location"
             >
               <MapPin className="h-4 w-4" />
             </Button>
@@ -199,6 +228,10 @@ const UploadForm: React.FC = () => {
       <Button type="submit" className="w-full" disabled={isUploading}>
         {isUploading ? 'Uploading...' : 'Submit Report'}
       </Button>
+      
+      <p className="text-xs text-muted-foreground text-center">
+        Your contributions help us monitor river quality and respond to issues faster.
+      </p>
     </form>
   );
 };

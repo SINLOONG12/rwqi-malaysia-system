@@ -18,18 +18,45 @@ const ReportsList: React.FC<ReportsListProps> = ({ reports }) => {
     
     if (!report) return;
     
+    // Create a link element to trigger download
+    const link = document.createElement('a');
+    
+    // For demonstration purposes, we'll simulate different file types
+    // In a real application, these would be actual URLs to files
+    let demoUrl = '';
+    
+    // In a real app, these would be actual API endpoints that serve the files
+    switch(report.type) {
+      case 'pdf':
+        demoUrl = `data:application/pdf,${encodeURIComponent(`This is a demo ${report.title} PDF content`)}`;
+        break;
+      case 'excel':
+        demoUrl = `data:application/vnd.ms-excel,${encodeURIComponent(`This is a demo ${report.title} Excel content`)}`;
+        break;
+      case 'word':
+        demoUrl = `data:application/msword,${encodeURIComponent(`This is a demo ${report.title} Word content`)}`;
+        break;
+      default:
+        demoUrl = `data:text/plain,${encodeURIComponent(`This is a demo ${report.title} text content`)}`;
+    }
+    
+    // Show toast notification
     toast({
       title: "Downloading Report",
       description: `${report.title} (${report.type.toUpperCase()}) is being downloaded.`,
     });
     
-    // In a real app, this would be a fetch request to download the file
-    setTimeout(() => {
-      toast({
-        title: "Download Complete",
-        description: `${report.title} has been downloaded successfully.`,
-      });
-    }, 1500);
+    // Set up the download link
+    link.href = demoUrl;
+    link.download = `${report.title.replace(/\s+/g, '_')}.${report.type}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast({
+      title: "Download Complete",
+      description: `${report.title} has been downloaded successfully.`,
+    });
   };
 
   const getFileTypeName = (type: string) => {

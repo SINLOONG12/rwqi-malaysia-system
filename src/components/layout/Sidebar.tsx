@@ -15,10 +15,7 @@ import {
   LayoutDashboard, 
   Droplet, 
   Database,
-  Map,
-  AlertTriangle,
   Users,
-  CloudRain
 } from 'lucide-react';
 
 const menuItems = [
@@ -41,22 +38,10 @@ const menuItems = [
     path: '/data-collection',
   },
   {
-    id: 'map-view',
-    label: 'Map View',
-    icon: <Map className="h-5 w-5" />,
-    path: '/river-monitoring?tab=map',
-  },
-  {
-    id: 'alerts',
-    label: 'Alerts & Notifications',
-    icon: <AlertTriangle className="h-5 w-5" />,
-    path: '/river-monitoring?tab=alerts',
-  },
-  {
-    id: 'analytics',
-    label: 'Advanced Analytics',
-    icon: <CloudRain className="h-5 w-5" />,
-    path: '/river-monitoring?tab=analytics',
+    id: 'community',
+    label: 'Community',
+    icon: <Users className="h-5 w-5" />,
+    path: '/data-collection?tab=user-uploads',
   },
 ];
 

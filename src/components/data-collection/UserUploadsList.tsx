@@ -4,12 +4,58 @@ import { AlertTriangle, CheckCircle, Download, MapPin } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { UserUpload } from './types';
 import FileTypeIcon from './FileTypeIcon';
+import { useToast } from "@/hooks/use-toast";
 
 interface UserUploadsListProps {
   uploads: UserUpload[];
 }
 
 const UserUploadsList: React.FC<UserUploadsListProps> = ({ uploads }) => {
+  const { toast } = useToast();
+  
+  const handleDownload = (upload: UserUpload) => {
+    // Similar to ReportsList, create a download link
+    const link = document.createElement('a');
+    
+    // Create a demo URL based on upload type
+    let demoUrl = '';
+    let fileExt = '';
+    
+    switch(upload.type) {
+      case 'pdf':
+        demoUrl = `data:application/pdf,${encodeURIComponent(`This is a demo upload from ${upload.user} at ${upload.location}`)}`;
+        fileExt = 'pdf';
+        break;
+      case 'image':
+        demoUrl = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAFeAJ5+EGHCAAAAABJRU5ErkJggg==`;
+        fileExt = 'png';
+        break;
+      case 'video':
+        demoUrl = `data:video/mp4,${encodeURIComponent('Demo video content')}`;
+        fileExt = 'mp4';
+        break;
+      default:
+        demoUrl = `data:text/plain,${encodeURIComponent(`Upload content for ${upload.location}`)}`;
+        fileExt = 'txt';
+    }
+    
+    toast({
+      title: "Downloading File",
+      description: `File from ${upload.location} is being downloaded.`,
+    });
+    
+    link.href = demoUrl;
+    link.download = `upload_${upload.id}.${fileExt}`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    toast({
+      title: "Download Complete",
+      description: "File has been downloaded successfully.",
+    });
+  };
+
   return (
     <div className="space-y-4">
       {uploads.map(upload => (
@@ -53,12 +99,15 @@ const UserUploadsList: React.FC<UserUploadsListProps> = ({ uploads }) => {
                 <Button variant="link" size="sm" className="text-xs h-auto p-0">
                   View Details
                 </Button>
-                {upload.type === 'pdf' && (
-                  <Button variant="link" size="sm" className="text-xs h-auto p-0 flex items-center gap-1">
-                    <Download className="h-3 w-3" />
-                    Download
-                  </Button>
-                )}
+                <Button 
+                  variant="link" 
+                  size="sm" 
+                  className="text-xs h-auto p-0 flex items-center gap-1"
+                  onClick={() => handleDownload(upload)}
+                >
+                  <Download className="h-3 w-3" />
+                  Download
+                </Button>
               </div>
             </div>
           </div>
