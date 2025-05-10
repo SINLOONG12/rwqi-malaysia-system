@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, MapPin, Camera, CheckCircle, AlertTriangle, Download, FileVideo, FilePdf } from 'lucide-react';
+import { Upload, MapPin, Camera, CheckCircle, AlertTriangle, Download, FileVideo, FileText } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Simulated user uploads
@@ -200,7 +200,7 @@ const UserUploads: React.FC = () => {
       case 'pdf':
       case 'word':
       case 'excel':
-        return <FilePdf className="h-8 w-8 text-slate-400" />;
+        return <FileText className="h-8 w-8 text-slate-400" />;
       default:
         return <Camera className="h-8 w-8 text-slate-400" />;
     }
@@ -369,7 +369,7 @@ const UserUploads: React.FC = () => {
                   onClick={() => triggerFileInput("document")}
                   className="flex items-center gap-2"
                 >
-                  <FilePdf className="h-4 w-4" />
+                  <FileText className="h-4 w-4" />
                   Document
                 </Button>
               </div>
