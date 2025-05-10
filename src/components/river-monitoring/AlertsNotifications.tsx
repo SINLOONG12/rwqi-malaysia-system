@@ -1,11 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Bell, BellOff, AlertTriangle, Check, Clock, Filter } from 'lucide-react';
+import { Bell, BellOff, AlertTriangle, Check, Clock, Filter, Download, FileText } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
 interface AlertsNotificationsProps {
@@ -15,16 +15,31 @@ interface AlertsNotificationsProps {
 const AlertsNotifications: React.FC<AlertsNotificationsProps> = ({ userRole }) => {
   const { toast } = useToast();
   const [alertFilter, setAlertFilter] = useState<"all" | "high" | "medium" | "low">("all");
-  const [subscribedAlerts, setSubscribedAlerts] = useState({
-    email: true,
-    sms: false,
-    app: true,
-    critical: true,
-    sensor: false,
-    cleanup: true
+  const [subscribedAlerts, setSubscribedAlerts] = useState(() => {
+    // Try to load saved settings from localStorage
+    const savedSettings = localStorage.getItem('alertSettings');
+    if (savedSettings) {
+      return JSON.parse(savedSettings);
+    }
+    return {
+      email: true,
+      sms: false,
+      app: true,
+      critical: true,
+      sensor: false,
+      cleanup: true
+    };
   });
 
+  // Save settings to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('alertSettings', JSON.stringify(subscribedAlerts));
+  }, [subscribedAlerts]);
+
   const handleSettingsSave = () => {
+    // Settings are already saved via the useEffect, this is just for user feedback
+    localStorage.setItem('alertSettings', JSON.stringify(subscribedAlerts));
+    
     toast({
       title: "Alert preferences saved",
       description: "Your notification settings have been updated successfully."
@@ -42,6 +57,13 @@ const AlertsNotifications: React.FC<AlertsNotificationsProps> = ({ userRole }) =
     toast({
       title: "Alert acknowledged",
       description: `Alert #${alertId} has been marked as acknowledged.`
+    });
+  };
+
+  const handleGenerateReport = (alertId: string) => {
+    toast({
+      title: "Report Generated",
+      description: `A detailed report for alert #${alertId} has been generated and is ready for download.`
     });
   };
 
@@ -200,13 +222,32 @@ const AlertsNotifications: React.FC<AlertsNotificationsProps> = ({ userRole }) =
                   <p className="text-sm text-muted-foreground mb-3">{alert.message}</p>
                   
                   {/* Action buttons - different for different user roles */}
-                  <div className="flex justify-end space-x-2">
+                  <div className="flex flex-wrap justify-end gap-2">
+                    {/* Report generation button for all user types */}
+                    <Button 
+                      size="sm" 
+                      variant="outline" 
+                      onClick={() => handleGenerateReport(alert.id)}
+                      className="flex items-center"
+                    >
+                      <FileText className="h-4 w-4 mr-1" />
+                      Generate Report
+                    </Button>
+                    
                     {userRole === "cleanup" && alert.type === "pollution" && (
-                      <Button size="sm" variant="default">View Cleanup Plan</Button>
+                      <Button size="sm" variant="default" className="flex items-center">
+                        <Download className="h-4 w-4 mr-1" />
+                        View Cleanup Plan
+                      </Button>
                     )}
+                    
                     {userRole === "government" && (
-                      <Button size="sm" variant="outline">Generate Report</Button>
+                      <Button size="sm" variant="default" className="flex items-center">
+                        <Download className="h-4 w-4 mr-1" />
+                        Download Full Report
+                      </Button>
                     )}
+                    
                     <Button 
                       size="sm" 
                       variant="outline" 
@@ -242,7 +283,7 @@ const AlertsNotifications: React.FC<AlertsNotificationsProps> = ({ userRole }) =
                     id="email" 
                     checked={subscribedAlerts.email}
                     onCheckedChange={(checked) => 
-                      setSubscribedAlerts({...subscribedAlerts, email: checked as boolean})
+                      setSubscribedAlerts({...subscribedAlerts, email: checked === true})
                     }
                   />
                   <label htmlFor="email" className="text-sm">Email notifications</label>
@@ -252,7 +293,7 @@ const AlertsNotifications: React.FC<AlertsNotificationsProps> = ({ userRole }) =
                     id="sms"
                     checked={subscribedAlerts.sms}
                     onCheckedChange={(checked) => 
-                      setSubscribedAlerts({...subscribedAlerts, sms: checked as boolean})
+                      setSubscribedAlerts({...subscribedAlerts, sms: checked === true})
                     }
                   />
                   <label htmlFor="sms" className="text-sm">SMS notifications</label>
@@ -262,7 +303,7 @@ const AlertsNotifications: React.FC<AlertsNotificationsProps> = ({ userRole }) =
                     id="app" 
                     checked={subscribedAlerts.app}
                     onCheckedChange={(checked) => 
-                      setSubscribedAlerts({...subscribedAlerts, app: checked as boolean})
+                      setSubscribedAlerts({...subscribedAlerts, app: checked === true})
                     }
                   />
                   <label htmlFor="app" className="text-sm">In-app notifications</label>
@@ -278,7 +319,7 @@ const AlertsNotifications: React.FC<AlertsNotificationsProps> = ({ userRole }) =
                     id="critical" 
                     checked={subscribedAlerts.critical}
                     onCheckedChange={(checked) => 
-                      setSubscribedAlerts({...subscribedAlerts, critical: checked as boolean})
+                      setSubscribedAlerts({...subscribedAlerts, critical: checked === true})
                     }
                   />
                   <label htmlFor="critical" className="text-sm">Critical pollution events</label>
@@ -288,7 +329,7 @@ const AlertsNotifications: React.FC<AlertsNotificationsProps> = ({ userRole }) =
                     id="sensor"
                     checked={subscribedAlerts.sensor}
                     onCheckedChange={(checked) => 
-                      setSubscribedAlerts({...subscribedAlerts, sensor: checked as boolean})
+                      setSubscribedAlerts({...subscribedAlerts, sensor: checked === true})
                     }
                   />
                   <label htmlFor="sensor" className="text-sm">Sensor malfunctions or offline events</label>
@@ -298,7 +339,7 @@ const AlertsNotifications: React.FC<AlertsNotificationsProps> = ({ userRole }) =
                     id="cleanup" 
                     checked={subscribedAlerts.cleanup}
                     onCheckedChange={(checked) => 
-                      setSubscribedAlerts({...subscribedAlerts, cleanup: checked as boolean})
+                      setSubscribedAlerts({...subscribedAlerts, cleanup: checked === true})
                     }
                   />
                   <label htmlFor="cleanup" className="text-sm">Cleanup operation updates</label>

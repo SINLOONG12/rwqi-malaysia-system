@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
@@ -6,16 +7,19 @@ import {
   Bell,
   Database,
   History,
+  FileText
 } from 'lucide-react';
 import { riverQualityData } from '@/utils/riverData';
 import { useToast } from "@/hooks/use-toast";
 import RoleSelector from '@/components/river-monitoring/RoleSelector';
 import OverviewTab from '@/components/river-monitoring/OverviewTab';
 import RiverMonitoringMap from '@/components/river-monitoring/RiverMonitoringMap';
+import MalaysiaRiversMap from '@/components/river-monitoring/MalaysiaRiversMap';
 import AlertsNotifications from '@/components/river-monitoring/AlertsNotifications';
 import PredictiveAnalytics from '@/components/river-monitoring/PredictiveAnalytics';
 import RiverQualityTrendChart from '@/components/river-monitoring/RiverQualityTrendChart';
 import RiverQualityDataTable from '@/components/river-monitoring/RiverQualityDataTable';
+import ReportGenerator from '@/components/river-monitoring/ReportGenerator';
 
 const RiverMonitoringPage: React.FC = () => {
   const { toast } = useToast();
@@ -50,6 +54,11 @@ const RiverMonitoringPage: React.FC = () => {
     });
   };
 
+  // Handle quick action navigation
+  const handleQuickAction = (tabId: string) => {
+    setActiveTab(tabId);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-6">
@@ -61,8 +70,47 @@ const RiverMonitoringPage: React.FC = () => {
         <RoleSelector userRole={userRole} setUserRole={setUserRole} />
       </div>
 
+      {/* Quick Actions */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-2">
+        <button 
+          className="bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 p-3 rounded-md flex flex-col items-center text-xs font-medium hover:bg-blue-200 dark:hover:bg-blue-900/40 transition-colors"
+          onClick={() => handleQuickAction("map")}
+        >
+          <Map className="h-5 w-5 mb-1" />
+          View Map
+        </button>
+        <button 
+          className="bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-300 p-3 rounded-md flex flex-col items-center text-xs font-medium hover:bg-red-200 dark:hover:bg-red-900/40 transition-colors"
+          onClick={() => handleQuickAction("alerts")}
+        >
+          <Bell className="h-5 w-5 mb-1" />
+          Alerts
+        </button>
+        <button 
+          className="bg-green-100 dark:bg-green-900/20 text-green-700 dark:text-green-300 p-3 rounded-md flex flex-col items-center text-xs font-medium hover:bg-green-200 dark:hover:bg-green-900/40 transition-colors"
+          onClick={() => handleQuickAction("historical")}
+        >
+          <History className="h-5 w-5 mb-1" />
+          Historical Data
+        </button>
+        <button 
+          className="bg-purple-100 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 p-3 rounded-md flex flex-col items-center text-xs font-medium hover:bg-purple-200 dark:hover:bg-purple-900/40 transition-colors"
+          onClick={() => handleQuickAction("analytics")}
+        >
+          <Database className="h-5 w-5 mb-1" />
+          Analytics
+        </button>
+        <button 
+          className="bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 p-3 rounded-md flex flex-col items-center text-xs font-medium hover:bg-amber-200 dark:hover:bg-amber-900/40 transition-colors"
+          onClick={() => handleQuickAction("reports")}
+        >
+          <FileText className="h-5 w-5 mb-1" />
+          Reports
+        </button>
+      </div>
+
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-5 mb-8">
+        <TabsList className="grid grid-cols-6 mb-8">
           <TabsTrigger value="overview">
             <ChartBar className="h-4 w-4 mr-2" />
             Overview
@@ -73,15 +121,19 @@ const RiverMonitoringPage: React.FC = () => {
           </TabsTrigger>
           <TabsTrigger value="alerts">
             <Bell className="h-4 w-4 mr-2" />
-            Alerts & Notifications
+            Alerts
           </TabsTrigger>
           <TabsTrigger value="analytics">
             <Database className="h-4 w-4 mr-2" />
-            Advanced Analytics
+            Analytics
           </TabsTrigger>
           <TabsTrigger value="historical">
             <History className="h-4 w-4 mr-2" />
             Historical Data
+          </TabsTrigger>
+          <TabsTrigger value="reports">
+            <FileText className="h-4 w-4 mr-2" />
+            Reports
           </TabsTrigger>
         </TabsList>
         
@@ -98,7 +150,10 @@ const RiverMonitoringPage: React.FC = () => {
         
         {/* Map Tab Content */}
         <TabsContent value="map">
-          <RiverMonitoringMap userRole={userRole} />
+          <div className="space-y-6">
+            <MalaysiaRiversMap userRole={userRole} />
+            <RiverMonitoringMap userRole={userRole} />
+          </div>
         </TabsContent>
         
         {/* Alerts Tab Content */}
@@ -114,6 +169,11 @@ const RiverMonitoringPage: React.FC = () => {
         {/* Historical Data Tab Content */}
         <TabsContent value="historical">
           <HistoricalDataTab onDownloadReport={handleDownloadReport} />
+        </TabsContent>
+
+        {/* Reports Tab Content */}
+        <TabsContent value="reports">
+          <ReportGenerator userRole={userRole} />
         </TabsContent>
       </Tabs>
     </div>
