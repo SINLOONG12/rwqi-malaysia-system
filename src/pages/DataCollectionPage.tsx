@@ -25,36 +25,52 @@ const DataCollectionPage: React.FC = () => {
   };
   
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Data Collection Integration</h1>
-        <p className="text-muted-foreground">Manage and integrate various data sources for river monitoring.</p>
+    <div className="container max-w-7xl mx-auto py-8 px-4 sm:px-6">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-500">
+          Data Collection Integration
+        </h1>
+        <p className="text-muted-foreground mt-2">
+          Manage and integrate various data sources for comprehensive river monitoring
+        </p>
       </div>
 
-      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid grid-cols-4 mb-8">
-          <TabsTrigger value="camera-feeds">Live Camera Feeds</TabsTrigger>
-          <TabsTrigger value="sensor-data">Sensor Data</TabsTrigger>
-          <TabsTrigger value="user-uploads">Community Contributions</TabsTrigger>
-          <TabsTrigger value="weather-data">Weather Data</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="camera-feeds">
-          <LiveCameraFeeds />
-        </TabsContent>
-        
-        <TabsContent value="sensor-data">
-          <SensorDataInputs />
-        </TabsContent>
-        
-        <TabsContent value="user-uploads">
-          <UserUploads />
-        </TabsContent>
-        
-        <TabsContent value="weather-data">
-          <WeatherDataIntegration />
-        </TabsContent>
-      </Tabs>
+      <div className="bg-card rounded-xl shadow-sm border p-1">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+          <TabsList className="grid grid-cols-4 mb-6 bg-muted/50 p-1 rounded-lg">
+            <TabsTrigger value="camera-feeds" className="rounded-md data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
+              Live Camera Feeds
+            </TabsTrigger>
+            <TabsTrigger value="sensor-data" className="rounded-md data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
+              Sensor Data
+            </TabsTrigger>
+            <TabsTrigger value="user-uploads" className="rounded-md data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
+              Community Contributions
+            </TabsTrigger>
+            <TabsTrigger value="weather-data" className="rounded-md data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
+              Weather Data
+            </TabsTrigger>
+          </TabsList>
+          
+          <div className="p-4">
+            <TabsContent value="camera-feeds">
+              <LiveCameraFeeds />
+            </TabsContent>
+            
+            <TabsContent value="sensor-data">
+              <SensorDataInputs />
+            </TabsContent>
+            
+            <TabsContent value="user-uploads">
+              <UserUploads />
+            </TabsContent>
+            
+            <TabsContent value="weather-data">
+              <WeatherDataIntegration />
+            </TabsContent>
+          </div>
+        </Tabs>
+      </div>
     </div>
   );
 };

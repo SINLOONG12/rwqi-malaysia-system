@@ -14,8 +14,6 @@ import {
 import { 
   LayoutDashboard, 
   Droplet, 
-  Database,
-  Users,
 } from 'lucide-react';
 
 const menuItems = [
@@ -31,29 +29,24 @@ const menuItems = [
     icon: <Droplet className="h-5 w-5" />,
     path: '/river-monitoring',
   },
-  {
-    id: 'data-collection',
-    label: 'Data Collection',
-    icon: <Database className="h-5 w-5" />,
-    path: '/data-collection',
-  },
-  {
-    id: 'community',
-    label: 'Community',
-    icon: <Users className="h-5 w-5" />,
-    path: '/data-collection?tab=user-uploads',
-  },
 ];
 
 const Sidebar: React.FC = () => {
   return (
-    <SidebarComponent>
-      <div className="p-4 flex items-center">
-        <span className="text-xl font-bold text-dashboard-indigo">Malaysian River Quality</span>
+    <SidebarComponent className="border-r border-sidebar-border">
+      <div className="p-4 flex items-center justify-center">
+        <div className="flex flex-col items-center">
+          <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-blue-300">
+            Malaysian River
+          </span>
+          <span className="text-sm font-medium text-sidebar-foreground/70">Water Quality Monitor</span>
+        </div>
       </div>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Main Menu</SidebarGroupLabel>
+          <SidebarGroupLabel className="px-4 text-xs uppercase tracking-wider text-sidebar-foreground/50">
+            Main Menu
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
@@ -62,11 +55,13 @@ const Sidebar: React.FC = () => {
                     <NavLink
                       to={item.path}
                       className={({ isActive }) =>
-                        isActive ? 'text-dashboard-indigo' : ''
+                        isActive 
+                          ? 'flex items-center gap-3 rounded-lg px-3 py-2 bg-sidebar-primary text-sidebar-primary-foreground' 
+                          : 'flex items-center gap-3 rounded-lg px-3 py-2 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors'
                       }
                     >
                       {item.icon}
-                      <span>{item.label}</span>
+                      <span className="font-medium">{item.label}</span>
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
