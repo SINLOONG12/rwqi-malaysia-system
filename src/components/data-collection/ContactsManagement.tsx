@@ -28,12 +28,12 @@ const ContactsManagement: React.FC = () => {
     { id: "5", name: "Tan Mei Hua", email: "tanmh@water.gov.my", organization: "Water Commission", role: "Analyst", type: "government" },
   ]);
   
-  const [newContact, setNewContact] = useState({
+  const [newContact, setNewContact] = useState<Omit<Contact, 'id'>>({
     name: "",
     email: "",
     organization: "",
     role: "",
-    type: "cleanup" as const
+    type: "cleanup"
   });
   
   const [filter, setFilter] = useState("all");
@@ -207,8 +207,8 @@ const ContactsManagement: React.FC = () => {
               <Label htmlFor="type">Contact Type</Label>
               <Select 
                 value={newContact.type} 
-                onValueChange={(value: "cleanup" | "government" | "publisher" | "public") => 
-                  setNewContact({...newContact, type: value as "cleanup" | "government" | "publisher" | "public"})
+                onValueChange={(value) => 
+                  setNewContact({...newContact, type: value as Contact['type']})
                 }
               >
                 <SelectTrigger>
