@@ -8,6 +8,7 @@ import SensorDataInputs from "@/components/data-collection/SensorDataInputs";
 import UserUploads from "@/components/data-collection/UserUploads";
 import WeatherDataIntegration from "@/components/data-collection/WeatherDataIntegration";
 import PublisherDashboard from "@/components/data-collection/PublisherDashboard";
+import ContactsManagement from "@/components/data-collection/ContactsManagement";
 import { useToast } from "@/hooks/use-toast";
 import RoleSelector from "@/components/river-monitoring/RoleSelector";
 
@@ -44,7 +45,7 @@ const DataCollectionPage: React.FC = () => {
 
       <div className="bg-card rounded-xl shadow-sm border p-1">
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className="grid grid-cols-5 mb-6 bg-muted/50 p-1 rounded-lg">
+          <TabsList className="grid grid-cols-6 mb-6 bg-muted/50 p-1 rounded-lg">
             <TabsTrigger value="camera-feeds" className="rounded-md data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
               Live Camera Feeds
             </TabsTrigger>
@@ -56,6 +57,9 @@ const DataCollectionPage: React.FC = () => {
             </TabsTrigger>
             <TabsTrigger value="weather-data" className="rounded-md data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
               Weather Data
+            </TabsTrigger>
+            <TabsTrigger value="contacts" className="rounded-md data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
+              Contacts
             </TabsTrigger>
             {userRole === "publisher" && (
               <TabsTrigger value="publisher-dashboard" className="rounded-md data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
@@ -79,6 +83,10 @@ const DataCollectionPage: React.FC = () => {
             
             <TabsContent value="weather-data">
               <WeatherDataIntegration />
+            </TabsContent>
+            
+            <TabsContent value="contacts">
+              <ContactsManagement />
             </TabsContent>
             
             {userRole === "publisher" && (

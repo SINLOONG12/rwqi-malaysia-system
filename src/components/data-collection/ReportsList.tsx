@@ -1,10 +1,14 @@
 
-import React from 'react';
-import { Download, Edit, Trash } from 'lucide-react';
+import React, { useState } from 'react';
+import { Download, Edit, Trash, Users, Send, Link } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { ReportItem } from './types';
 import FileTypeIcon from './FileTypeIcon';
 import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface ReportsListProps {
   reports: ReportItem[];
@@ -13,6 +17,10 @@ interface ReportsListProps {
 
 const ReportsList: React.FC<ReportsListProps> = ({ reports, publisherMode = false }) => {
   const { toast } = useToast();
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+  const [selectedReport, setSelectedReport] = useState<ReportItem | null>(null);
+  const [shareEmail, setShareEmail] = useState('');
+  const [shareTeam, setShareTeam] = useState('cleanup');
 
   const handleDownloadReport = (reportId: string) => {
     const report = reports.find(r => r.id === reportId);
@@ -89,6 +97,31 @@ const ReportsList: React.FC<ReportsListProps> = ({ reports, publisherMode = fals
     }
   };
 
+  const handleShareClick = (report: ReportItem) => {
+    setSelectedReport(report);
+    setShareDialogOpen(true);
+  };
+
+  const handleShareSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!selectedReport) return;
+    
+    toast({
+      title: "Report Shared",
+      description: `${selectedReport.title} has been shared with ${shareEmail || shareTeam + ' team'}.`,
+    });
+    
+    setShareDialogOpen(false);
+    setShareEmail('');
+  };
+
+  const shareOptions = [
+    { value: 'cleanup', label: 'Cleanup Teams' },
+    { value: 'government', label: 'Government Agencies' },
+    { value: 'public', label: 'Public Access' }
+  ];
+
   return (
     <div className="space-y-4">
       {reports.map(report => (
@@ -139,6 +172,17 @@ const ReportsList: React.FC<ReportsListProps> = ({ reports, publisherMode = fals
                   </Button>
                 </>
               )}
+              {(publisherMode || report.title.includes("Schedule") || report.title.includes("Plan")) && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex items-center gap-2"
+                  onClick={() => handleShareClick(report)}
+                >
+                  <Send className="h-4 w-4" />
+                  Share
+                </Button>
+              )}
               <Button 
                 variant="outline" 
                 size="sm" 
@@ -152,6 +196,56 @@ const ReportsList: React.FC<ReportsListProps> = ({ reports, publisherMode = fals
           </div>
         </div>
       ))}
+
+      <Dialog open={shareDialogOpen} onOpenChange={setShareDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Share Report</DialogTitle>
+            <DialogDescription>
+              Share this report with team members or external contacts.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={handleShareSubmit} className="space-y-4 pt-2">
+            <div className="space-y-2">
+              <Label htmlFor="share-type">Share with</Label>
+              <Select value={shareTeam} onValueChange={setShareTeam}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {shareOptions.map(option => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="email">Or share with specific email</Label>
+              <Input 
+                id="email"
+                type="email"
+                placeholder="Enter email address"
+                value={shareEmail}
+                onChange={(e) => setShareEmail(e.target.value)}
+              />
+            </div>
+            
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setShareDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" className="flex items-center gap-2">
+                <Send className="h-4 w-4" />
+                Share Report
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

@@ -1,4 +1,3 @@
-
 export interface UserUpload {
   id: string;
   type: string;
@@ -53,4 +52,18 @@ export interface ReportTemplate {
   description: string;
   type: "government" | "cleanup" | "public";
   format: "pdf" | "word" | "excel" | "csv";
+}
+
+// Report categories
+export type ReportCategory = "general" | "cleanup" | "compliance" | "analysis" | "schedule";
+
+// Report access levels
+export type AccessLevel = "public" | "government" | "cleanup";
+
+// Contact information
+export interface ContactInfo {
+  name: string;
+  email: string;
+  organization: string;
+  role: string;
 }
