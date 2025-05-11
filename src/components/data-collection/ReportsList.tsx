@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Download } from 'lucide-react';
+import { Download, Edit, Trash } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { ReportItem } from './types';
 import FileTypeIcon from './FileTypeIcon';
@@ -8,9 +8,10 @@ import { useToast } from "@/hooks/use-toast";
 
 interface ReportsListProps {
   reports: ReportItem[];
+  publisherMode?: boolean;
 }
 
-const ReportsList: React.FC<ReportsListProps> = ({ reports }) => {
+const ReportsList: React.FC<ReportsListProps> = ({ reports, publisherMode = false }) => {
   const { toast } = useToast();
 
   const handleDownloadReport = (reportId: string) => {
@@ -59,6 +60,20 @@ const ReportsList: React.FC<ReportsListProps> = ({ reports }) => {
     });
   };
 
+  const handleEditReport = (reportId: string) => {
+    toast({
+      title: "Edit Report",
+      description: "Opening report editor...",
+    });
+  };
+
+  const handleDeleteReport = (reportId: string) => {
+    toast({
+      title: "Delete Report",
+      description: "Report has been deleted.",
+    });
+  };
+
   const getFileTypeName = (type: string) => {
     switch (type) {
       case 'video':
@@ -101,7 +116,29 @@ const ReportsList: React.FC<ReportsListProps> = ({ reports }) => {
             
             <p className="mt-2 text-sm">By {report.author}</p>
             
-            <div className="flex justify-end items-center mt-2">
+            <div className="flex justify-end items-center mt-2 flex-wrap gap-2">
+              {publisherMode && (
+                <>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex items-center gap-2 text-amber-600"
+                    onClick={() => handleEditReport(report.id)}
+                  >
+                    <Edit className="h-4 w-4" />
+                    Edit
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="flex items-center gap-2 text-red-600"
+                    onClick={() => handleDeleteReport(report.id)}
+                  >
+                    <Trash className="h-4 w-4" />
+                    Delete
+                  </Button>
+                </>
+              )}
               <Button 
                 variant="outline" 
                 size="sm" 

@@ -4,12 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Upload, MapPin, Camera, CheckCircle, FileText } from 'lucide-react';
 import { UploadType } from './types';
 import FileTypeIcon from './FileTypeIcon';
 
-const UploadForm: React.FC = () => {
+interface UploadFormProps {
+  publisherMode?: boolean;
+}
+
+const UploadForm: React.FC<UploadFormProps> = ({ publisherMode = false }) => {
   const { toast } = useToast();
   const [uploadFile, setUploadFile] = useState<File | null>(null);
   const [description, setDescription] = useState<string>('');
@@ -17,6 +22,8 @@ const UploadForm: React.FC = () => {
   const [location, setLocation] = useState<string>('');
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadType, setUploadType] = useState<UploadType>("media");
+  const [accessLevel, setAccessLevel] = useState<string>("public");
+  const [reportType, setReportType] = useState<string>("pdf");
   
   // Create refs for file inputs
   const mediaInputRef = useRef<HTMLInputElement>(null);
@@ -74,8 +81,10 @@ const UploadForm: React.FC = () => {
       setLocation('');
       
       toast({
-        title: "Upload Successful",
-        description: "Thank you for your contribution to river monitoring!",
+        title: publisherMode ? "Report Published" : "Upload Successful",
+        description: publisherMode 
+          ? "Your report has been published and is now available for download."
+          : "Thank you for your contribution to river monitoring!",
       });
     }, 2000);
   };
@@ -110,26 +119,51 @@ const UploadForm: React.FC = () => {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <Label htmlFor="upload-type">Upload Type</Label>
+        <Label htmlFor="upload-type">{publisherMode ? "Report Type" : "Upload Type"}</Label>
         <div className="grid grid-cols-2 gap-4 mt-1">
-          <Button 
-            type="button" 
-            variant={uploadType === "media" ? "default" : "outline"} 
-            onClick={() => triggerFileInput("media")}
-            className="flex items-center gap-2"
-          >
-            <Camera className="h-4 w-4" />
-            Photo/Video
-          </Button>
-          <Button 
-            type="button" 
-            variant={uploadType === "document" ? "default" : "outline"}
-            onClick={() => triggerFileInput("document")}
-            className="flex items-center gap-2"
-          >
-            <FileText className="h-4 w-4" />
-            Document
-          </Button>
+          {publisherMode ? (
+            <>
+              <Button 
+                type="button" 
+                variant={uploadType === "document" ? "default" : "outline"}
+                onClick={() => triggerFileInput("document")}
+                className="flex items-center gap-2"
+              >
+                <FileText className="h-4 w-4" />
+                Official Report
+              </Button>
+              <Button 
+                type="button" 
+                variant={uploadType === "media" ? "default" : "outline"} 
+                onClick={() => triggerFileInput("media")}
+                className="flex items-center gap-2"
+              >
+                <Camera className="h-4 w-4" />
+                Media Content
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button 
+                type="button" 
+                variant={uploadType === "media" ? "default" : "outline"} 
+                onClick={() => triggerFileInput("media")}
+                className="flex items-center gap-2"
+              >
+                <Camera className="h-4 w-4" />
+                Photo/Video
+              </Button>
+              <Button 
+                type="button" 
+                variant={uploadType === "document" ? "default" : "outline"}
+                onClick={() => triggerFileInput("document")}
+                className="flex items-center gap-2"
+              >
+                <FileText className="h-4 w-4" />
+                Document
+              </Button>
+            </>
+          )}
         </div>
         
         <div 
@@ -186,7 +220,7 @@ const UploadForm: React.FC = () => {
       
       <div className="space-y-4">
         <div>
-          <Label htmlFor="location">Location</Label>
+          <Label htmlFor="location">{publisherMode ? "River Location" : "Location"}</Label>
           <div className="flex gap-2 mt-1">
             <Input 
               id="location"
@@ -213,11 +247,49 @@ const UploadForm: React.FC = () => {
           </div>
         )}
         
+        {publisherMode && (
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="report-type">File Format</Label>
+              <Select
+                value={reportType}
+                onValueChange={setReportType}
+              >
+                <SelectTrigger id="report-type">
+                  <SelectValue placeholder="Select format" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pdf">PDF Document</SelectItem>
+                  <SelectItem value="excel">Excel Spreadsheet</SelectItem>
+                  <SelectItem value="word">Word Document</SelectItem>
+                  <SelectItem value="video">Video File</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label htmlFor="access-level">Access Level</Label>
+              <Select
+                value={accessLevel}
+                onValueChange={setAccessLevel}
+              >
+                <SelectTrigger id="access-level">
+                  <SelectValue placeholder="Select access" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="public">Public Access</SelectItem>
+                  <SelectItem value="government">Government Only</SelectItem>
+                  <SelectItem value="cleanup">Cleanup Teams Only</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        )}
+        
         <div>
-          <Label htmlFor="description">Description</Label>
+          <Label htmlFor="description">{publisherMode ? "Report Details" : "Description"}</Label>
           <Textarea 
             id="description" 
-            placeholder="Describe what you observed..."
+            placeholder={publisherMode ? "Provide details about this report..." : "Describe what you observed..."}
             className="mt-1"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
@@ -226,11 +298,13 @@ const UploadForm: React.FC = () => {
       </div>
       
       <Button type="submit" className="w-full" disabled={isUploading}>
-        {isUploading ? 'Uploading...' : 'Submit Report'}
+        {isUploading ? 'Uploading...' : publisherMode ? 'Publish Report' : 'Submit Report'}
       </Button>
       
       <p className="text-xs text-muted-foreground text-center">
-        Your contributions help us monitor river quality and respond to issues faster.
+        {publisherMode 
+          ? "Published reports will be immediately available for download by authorized users."
+          : "Your contributions help us monitor river quality and respond to issues faster."}
       </p>
     </form>
   );

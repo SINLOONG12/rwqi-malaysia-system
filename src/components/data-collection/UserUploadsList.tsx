@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { AlertTriangle, CheckCircle, Download, MapPin } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Download, MapPin, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { UserUpload } from './types';
 import FileTypeIcon from './FileTypeIcon';
@@ -8,9 +8,10 @@ import { useToast } from "@/hooks/use-toast";
 
 interface UserUploadsListProps {
   uploads: UserUpload[];
+  publisherMode?: boolean;
 }
 
-const UserUploadsList: React.FC<UserUploadsListProps> = ({ uploads }) => {
+const UserUploadsList: React.FC<UserUploadsListProps> = ({ uploads, publisherMode = false }) => {
   const { toast } = useToast();
   
   const handleDownload = (upload: UserUpload) => {
@@ -27,7 +28,7 @@ const UserUploadsList: React.FC<UserUploadsListProps> = ({ uploads }) => {
         fileExt = 'pdf';
         break;
       case 'image':
-        demoUrl = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAFeAJ5+EGHCAAAAABJRU5ErkJggg==`;
+        demoUrl = `data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAFeAJ5+EGEHCAAAAABJRU5ErkJggg==`;
         fileExt = 'png';
         break;
       case 'video':
@@ -53,6 +54,20 @@ const UserUploadsList: React.FC<UserUploadsListProps> = ({ uploads }) => {
     toast({
       title: "Download Complete",
       description: "File has been downloaded successfully.",
+    });
+  };
+
+  const handleApprove = (uploadId: string) => {
+    toast({
+      title: "Upload Approved",
+      description: "The upload has been verified and published.",
+    });
+  };
+
+  const handleReject = (uploadId: string) => {
+    toast({
+      title: "Upload Rejected",
+      description: "The upload has been rejected.",
     });
   };
 
@@ -95,7 +110,29 @@ const UserUploadsList: React.FC<UserUploadsListProps> = ({ uploads }) => {
               <span className="text-xs text-muted-foreground">
                 Uploaded on {upload.date} by {upload.user}
               </span>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
+                {publisherMode && upload.status === 'pending' && (
+                  <>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-red-600 text-xs h-auto p-1 flex items-center gap-1"
+                      onClick={() => handleReject(upload.id)}
+                    >
+                      <ThumbsDown className="h-3 w-3" />
+                      Reject
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-green-600 text-xs h-auto p-1 flex items-center gap-1"
+                      onClick={() => handleApprove(upload.id)}
+                    >
+                      <ThumbsUp className="h-3 w-3" />
+                      Approve
+                    </Button>
+                  </>
+                )}
                 <Button variant="link" size="sm" className="text-xs h-auto p-0">
                   View Details
                 </Button>

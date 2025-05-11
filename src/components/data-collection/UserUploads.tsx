@@ -2,13 +2,27 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import UserUploadsList from './UserUploadsList';
 import ReportsList from './ReportsList';
 import UploadForm from './UploadForm';
 import { recentUploads, availableReports } from './mock-data';
 
-const UserUploads: React.FC = () => {
+interface UserUploadsProps {
+  publisherMode?: boolean;
+}
+
+const UserUploads: React.FC<UserUploadsProps> = ({ publisherMode = false }) => {
   const [activeTab, setActiveTab] = useState<string>("uploads");
+  const [filteredUploads, setFilteredUploads] = useState(recentUploads);
+  
+  const handleFilterUploads = (status: string) => {
+    if (status === "all") {
+      setFilteredUploads(recentUploads);
+    } else {
+      setFilteredUploads(recentUploads.filter(upload => upload.status === status));
+    }
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -39,24 +53,60 @@ const UserUploads: React.FC = () => {
         </CardHeader>
         <CardContent>
           <TabsContent value="uploads" className="m-0 mt-2">
-            <UserUploadsList uploads={recentUploads} />
+            {publisherMode && (
+              <div className="mb-4 flex flex-wrap gap-2">
+                <Button 
+                  variant={filteredUploads === recentUploads ? "default" : "outline"} 
+                  size="sm"
+                  onClick={() => handleFilterUploads("all")}
+                >
+                  All Uploads
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleFilterUploads("pending")}
+                >
+                  Pending Review
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleFilterUploads("verified")}
+                >
+                  Verified
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => handleFilterUploads("rejected")}
+                >
+                  Rejected
+                </Button>
+              </div>
+            )}
+            <UserUploadsList uploads={filteredUploads} publisherMode={publisherMode} />
           </TabsContent>
           
           <TabsContent value="reports" className="m-0 mt-2">
-            <ReportsList reports={availableReports} />
+            <ReportsList reports={availableReports} publisherMode={publisherMode} />
           </TabsContent>
         </CardContent>
       </Card>
 
       <Card className="border-blue-100 dark:border-blue-900/50">
         <CardHeader className="pb-2">
-          <CardTitle className="text-xl font-bold text-blue-700 dark:text-blue-400">Contribute</CardTitle>
+          <CardTitle className="text-xl font-bold text-blue-700 dark:text-blue-400">
+            {publisherMode ? "Publisher Upload" : "Contribute"}
+          </CardTitle>
           <CardDescription className="text-muted-foreground">
-            Upload geo-tagged photos, videos, or documents
+            {publisherMode 
+              ? "Upload official reports and data" 
+              : "Upload geo-tagged photos, videos, or documents"}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <UploadForm />
+          <UploadForm publisherMode={publisherMode} />
         </CardContent>
       </Card>
     </div>

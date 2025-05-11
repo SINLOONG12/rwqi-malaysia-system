@@ -7,13 +7,16 @@ import LiveCameraFeeds from "@/components/data-collection/LiveCameraFeeds";
 import SensorDataInputs from "@/components/data-collection/SensorDataInputs";
 import UserUploads from "@/components/data-collection/UserUploads";
 import WeatherDataIntegration from "@/components/data-collection/WeatherDataIntegration";
+import PublisherDashboard from "@/components/data-collection/PublisherDashboard";
 import { useToast } from "@/hooks/use-toast";
+import RoleSelector from "@/components/river-monitoring/RoleSelector";
 
 const DataCollectionPage: React.FC = () => {
   const { toast } = useToast();
   const [searchParams, setSearchParams] = useSearchParams();
   const defaultTab = searchParams.get('tab') || "camera-feeds";
   const [activeTab, setActiveTab] = useState<string>(defaultTab);
+  const [userRole, setUserRole] = useState<"government" | "cleanup" | "public" | "publisher">("public");
   
   useEffect(() => {
     // Update URL when tab changes
@@ -33,11 +36,15 @@ const DataCollectionPage: React.FC = () => {
         <p className="text-muted-foreground mt-2">
           Manage and integrate various data sources for comprehensive river monitoring
         </p>
+        
+        <div className="mt-4">
+          <RoleSelector userRole={userRole} setUserRole={setUserRole} />
+        </div>
       </div>
 
       <div className="bg-card rounded-xl shadow-sm border p-1">
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className="grid grid-cols-4 mb-6 bg-muted/50 p-1 rounded-lg">
+          <TabsList className="grid grid-cols-5 mb-6 bg-muted/50 p-1 rounded-lg">
             <TabsTrigger value="camera-feeds" className="rounded-md data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
               Live Camera Feeds
             </TabsTrigger>
@@ -50,11 +57,16 @@ const DataCollectionPage: React.FC = () => {
             <TabsTrigger value="weather-data" className="rounded-md data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
               Weather Data
             </TabsTrigger>
+            {userRole === "publisher" && (
+              <TabsTrigger value="publisher-dashboard" className="rounded-md data-[state=active]:bg-white data-[state=active]:text-primary data-[state=active]:shadow-sm">
+                Publisher Dashboard
+              </TabsTrigger>
+            )}
           </TabsList>
           
           <div className="p-4">
             <TabsContent value="camera-feeds">
-              <LiveCameraFeeds />
+              <LiveCameraFeeds publisherMode={userRole === "publisher"} />
             </TabsContent>
             
             <TabsContent value="sensor-data">
@@ -62,12 +74,18 @@ const DataCollectionPage: React.FC = () => {
             </TabsContent>
             
             <TabsContent value="user-uploads">
-              <UserUploads />
+              <UserUploads publisherMode={userRole === "publisher"} />
             </TabsContent>
             
             <TabsContent value="weather-data">
               <WeatherDataIntegration />
             </TabsContent>
+            
+            {userRole === "publisher" && (
+              <TabsContent value="publisher-dashboard">
+                <PublisherDashboard />
+              </TabsContent>
+            )}
           </div>
         </Tabs>
       </div>
