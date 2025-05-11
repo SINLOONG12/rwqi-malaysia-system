@@ -1,14 +1,13 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Download, FileText, Info } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
 interface PublicReportProps {
-  riverName?: string;
+  riverName: string;
 }
 
-const PublicReport: React.FC<PublicReportProps> = ({ riverName = "All Rivers" }) => {
+const PublicReport: React.FC<PublicReportProps> = ({ riverName }) => {
   const { toast } = useToast();
 
   const handleDownload = (reportType: string) => {

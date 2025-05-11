@@ -13,7 +13,7 @@ import { MapPin, Filter } from 'lucide-react';
 import { getRwqiColor, getUniqueLocations } from '@/utils/riverData';
 
 interface MalaysiaRiversMapProps {
-  userRole: "government" | "cleanup" | "public";
+  userRole: "government" | "cleanup" | "public" | "publisher";
   onRiverSelect?: (riverName: string) => void;
 }
 

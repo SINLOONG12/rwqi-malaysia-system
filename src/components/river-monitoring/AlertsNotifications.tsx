@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,7 +8,7 @@ import { Bell, BellOff, AlertTriangle, Check, Clock, Filter, Download, FileText 
 import { useToast } from "@/hooks/use-toast";
 
 interface AlertsNotificationsProps {
-  userRole: "government" | "cleanup" | "public";
+  userRole: "government" | "cleanup" | "public" | "publisher";
 }
 
 const AlertsNotifications: React.FC<AlertsNotificationsProps> = ({ userRole }) => {

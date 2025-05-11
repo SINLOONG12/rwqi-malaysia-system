@@ -5,7 +5,7 @@ import { Download, FileText } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
 interface GovernmentReportProps {
-  riverName?: string;
+  riverName: string;
 }
 
 const GovernmentReport: React.FC<GovernmentReportProps> = ({ riverName = "All Rivers" }) => {

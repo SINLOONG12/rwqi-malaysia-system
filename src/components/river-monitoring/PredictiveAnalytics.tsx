@@ -1,5 +1,5 @@
-
-import React, { useState } from 'react';
+import React from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -27,7 +27,7 @@ import { useToast } from "@/hooks/use-toast";
 import { riverQualityData, getUniqueLocations } from '@/utils/riverData';
 
 interface PredictiveAnalyticsProps {
-  userRole: "government" | "cleanup" | "public";
+  userRole: "government" | "cleanup" | "public" | "publisher";
 }
 
 const PredictiveAnalytics: React.FC<PredictiveAnalyticsProps> = ({ userRole }) => {

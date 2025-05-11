@@ -10,7 +10,7 @@ import CleanupReport from './reports/CleanupReport';
 import PublicReport from './reports/PublicReport';
 
 interface ReportGeneratorProps {
-  userRole: "government" | "cleanup" | "public";
+  userRole: "government" | "cleanup" | "public" | "publisher";
 }
 
 const ReportGenerator: React.FC<ReportGeneratorProps> = ({ userRole }) => {
@@ -24,6 +24,10 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ userRole }) => {
     { value: "word", label: "Word Document" },
     { value: "csv", label: "CSV Data" }
   ];
+
+  // Determine which report to show based on user role
+  // Publishers should see the government report
+  const effectiveRole = userRole === "publisher" ? "government" : userRole;
 
   return (
     <Card className="w-full">
@@ -75,15 +79,15 @@ const ReportGenerator: React.FC<ReportGeneratorProps> = ({ userRole }) => {
           </div>
         </div>
 
-        {userRole === "government" && (
+        {effectiveRole === "government" && (
           <GovernmentReport riverName={selectedLocation} />
         )}
 
-        {userRole === "cleanup" && (
+        {effectiveRole === "cleanup" && (
           <CleanupReport riverName={selectedLocation} />
         )}
 
-        {userRole === "public" && (
+        {effectiveRole === "public" && (
           <PublicReport riverName={selectedLocation} />
         )}
       </CardContent>

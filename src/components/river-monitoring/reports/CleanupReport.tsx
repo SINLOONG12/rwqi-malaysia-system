@@ -5,7 +5,7 @@ import { Download, FileText, Calendar } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
 interface CleanupReportProps {
-  riverName?: string;
+  riverName: string;
 }
 
 const CleanupReport: React.FC<CleanupReportProps> = ({ riverName = "All Rivers" }) => {

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
@@ -20,10 +21,13 @@ import RiverQualityTrendChart from '@/components/river-monitoring/RiverQualityTr
 import RiverQualityDataTable from '@/components/river-monitoring/RiverQualityDataTable';
 import ReportGenerator from '@/components/river-monitoring/ReportGenerator';
 
+// Define a type for all possible user roles
+type UserRole = "government" | "cleanup" | "public" | "publisher";
+
 const RiverMonitoringPage: React.FC = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("overview");
-  const [userRole, setUserRole] = useState<"government" | "cleanup" | "public" | "publisher">("government");
+  const [userRole, setUserRole] = useState<UserRole>("government");
   
   // Get today's data (using the latest date available)
   const latestDate = riverQualityData.reduce((latest, current) => {

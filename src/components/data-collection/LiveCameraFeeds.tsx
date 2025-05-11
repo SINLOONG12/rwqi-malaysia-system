@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,7 +20,11 @@ const cameraSources = [
   { id: 'cam-005', name: 'Sungai Perak - Station 1', location: 'Perak', status: 'maintenance' }
 ];
 
-const LiveCameraFeeds: React.FC = () => {
+interface LiveCameraFeedsProps {
+  publisherMode?: boolean;
+}
+
+const LiveCameraFeeds: React.FC<LiveCameraFeedsProps> = ({ publisherMode }) => {
   const { toast } = useToast();
   const [selectedCamera, setSelectedCamera] = useState<string>('cam-001');
   const [isPlaying, setIsPlaying] = useState<boolean>(false);

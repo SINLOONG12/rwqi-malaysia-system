@@ -1,4 +1,3 @@
-
 import React from 'react';
 import PollutionAlert from './PollutionAlert';
 import KeyMetricsGrid from './KeyMetricsGrid';
@@ -11,17 +10,9 @@ import PublicContent from './PublicContent';
 import RiverQualityDataTable from './RiverQualityDataTable';
 
 interface OverviewTabProps {
-  userRole: "government" | "cleanup" | "public";
-  lowestRwqiLocation: {
-    location: string;
-    rwqiScore: number;
-  };
-  latestDate: {
-    rwqiScore: number;
-    pH: number;
-    trashDetected: number;
-    dissolvedOxygen: number;
-  };
+  userRole: "government" | "cleanup" | "public" | "publisher";
+  lowestRwqiLocation: any;
+  latestDate: any;
   onDownloadReport: () => void;
   onSubmitFeedback: () => void;
 }
