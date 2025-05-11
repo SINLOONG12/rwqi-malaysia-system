@@ -8,7 +8,7 @@ import { Outlet } from 'react-router-dom';
 const AppLayout: React.FC = () => {
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-background to-background/95 dark:from-background dark:to-background">
+      <div className="min-h-screen flex w-full bg-gradient-to-br from-background to-background/95 dark:from-background dark:to-background/90">
         <Sidebar />
         <div className="flex flex-col flex-1">
           <Navbar />

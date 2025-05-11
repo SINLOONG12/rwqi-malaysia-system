@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useSearchParams } from 'react-router-dom';
 import LiveCameraFeeds from "@/components/data-collection/LiveCameraFeeds";
@@ -27,7 +27,7 @@ const DataCollectionPage: React.FC = () => {
   return (
     <div className="container max-w-7xl mx-auto py-8 px-4 sm:px-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-500">
+        <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-cyan-500">
           Data Collection Integration
         </h1>
         <p className="text-muted-foreground mt-2">

@@ -17,7 +17,7 @@ const Navbar: React.FC = () => {
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input 
                 type="search" 
-                placeholder="Search..." 
+                placeholder="Search rivers, locations..." 
                 className="w-64 pl-8 bg-background/50 focus-visible:bg-background" 
               />
             </div>
@@ -39,7 +39,7 @@ const Navbar: React.FC = () => {
             </div>
             <Avatar className="h-9 w-9 border-2 border-primary/20">
               <AvatarImage src="" />
-              <AvatarFallback className="bg-primary/10 text-primary">MY</AvatarFallback>
+              <AvatarFallback className="bg-gradient-to-br from-blue-500 to-cyan-500 text-primary-foreground">MY</AvatarFallback>
             </Avatar>
           </div>
         </div>

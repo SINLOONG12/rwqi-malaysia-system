@@ -13,7 +13,8 @@ import {
 } from "@/components/ui/sidebar";
 import { 
   LayoutDashboard, 
-  Droplet, 
+  Droplet,
+  Database
 } from 'lucide-react';
 
 const menuItems = [
@@ -29,6 +30,12 @@ const menuItems = [
     icon: <Droplet className="h-5 w-5" />,
     path: '/river-monitoring',
   },
+  {
+    id: 'data-collection',
+    label: 'Data Collection',
+    icon: <Database className="h-5 w-5" />,
+    path: '/data-collection',
+  },
 ];
 
 const Sidebar: React.FC = () => {
@@ -36,7 +43,7 @@ const Sidebar: React.FC = () => {
     <SidebarComponent className="border-r border-sidebar-border">
       <div className="p-4 flex items-center justify-center">
         <div className="flex flex-col items-center">
-          <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-blue-300">
+          <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-cyan-500">
             Malaysian River
           </span>
           <span className="text-sm font-medium text-sidebar-foreground/70">Water Quality Monitor</span>
