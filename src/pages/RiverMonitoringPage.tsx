@@ -23,7 +23,7 @@ import ReportGenerator from '@/components/river-monitoring/ReportGenerator';
 const RiverMonitoringPage: React.FC = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("overview");
-  const [userRole, setUserRole] = useState<"government" | "cleanup" | "public">("government");
+  const [userRole, setUserRole] = useState<"government" | "cleanup" | "public" | "publisher">("government");
   
   // Get today's data (using the latest date available)
   const latestDate = riverQualityData.reduce((latest, current) => {
