@@ -10,25 +10,28 @@ import RiverMonitoringPage from "./pages/RiverMonitoringPage";
 import DataCollectionPage from "./pages/DataCollectionPage";
 import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route element={<AppLayout />}>
-            <Route index path="/" element={<Dashboard />} />
-            <Route path="/river-monitoring" element={<RiverMonitoringPage />} />
-            <Route path="/data-collection" element={<DataCollectionPage />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  // Create a new QueryClient instance inside the component
+  const queryClient = new QueryClient();
+  
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route element={<AppLayout />}>
+              <Route index path="/" element={<Dashboard />} />
+              <Route path="/river-monitoring" element={<RiverMonitoringPage />} />
+              <Route path="/data-collection" element={<DataCollectionPage />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

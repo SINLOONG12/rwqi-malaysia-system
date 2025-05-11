@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -209,7 +208,7 @@ const ContactsManagement: React.FC = () => {
               <Select 
                 value={newContact.type} 
                 onValueChange={(value: "cleanup" | "government" | "publisher" | "public") => 
-                  setNewContact({...newContact, type: value})
+                  setNewContact({...newContact, type: value as "cleanup" | "government" | "publisher" | "public"})
                 }
               >
                 <SelectTrigger>
