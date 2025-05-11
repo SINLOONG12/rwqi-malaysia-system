@@ -9,10 +9,18 @@ import Dashboard from "./pages/Dashboard";
 import RiverMonitoringPage from "./pages/RiverMonitoringPage";
 import DataCollectionPage from "./pages/DataCollectionPage";
 import NotFound from "./pages/NotFound";
+import { useState } from "react";
 
 const App = () => {
-  // Create a new QueryClient instance inside the component
-  const queryClient = new QueryClient();
+  // Create a new QueryClient instance using useState to ensure stable reference
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchOnWindowFocus: false,
+        retry: 1,
+      },
+    },
+  }));
   
   return (
     <QueryClientProvider client={queryClient}>

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import PollutionAlert from './PollutionAlert';
 import KeyMetricsGrid from './KeyMetricsGrid';
@@ -8,6 +9,7 @@ import GovernmentContent from './GovernmentContent';
 import CleanupContent from './CleanupContent';
 import PublicContent from './PublicContent';
 import RiverQualityDataTable from './RiverQualityDataTable';
+import ChartContainer from './charts/ChartContainer';
 
 interface OverviewTabProps {
   userRole: "government" | "cleanup" | "public" | "publisher";
@@ -35,11 +37,17 @@ const OverviewTab: React.FC<OverviewTabProps> = ({
       <KeyMetricsGrid data={latestDate} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RiverFlowChart />
-        <RiverQualityGauge />
+        <ChartContainer height={280}>
+          <RiverFlowChart />
+        </ChartContainer>
+        <ChartContainer height={280}>
+          <RiverQualityGauge />
+        </ChartContainer>
       </div>
       
-      <RiverQualityTrendChart />
+      <ChartContainer height={350}>
+        <RiverQualityTrendChart />
+      </ChartContainer>
 
       {userRole === "government" && (
         <GovernmentContent onDownloadReport={onDownloadReport} />
