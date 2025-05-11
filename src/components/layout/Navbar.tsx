@@ -1,12 +1,19 @@
 
 import React from 'react';
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Bell, Search } from 'lucide-react';
+import { Bell, Search, LogOut } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Navbar: React.FC = () => {
+  const { user, logout } = useAuth();
+  
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <header className="sticky top-0 z-30 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex h-16 items-center justify-between px-4 md:px-6">
@@ -30,16 +37,22 @@ const Navbar: React.FC = () => {
             <span className="absolute top-1 right-1 flex h-2 w-2 rounded-full bg-destructive"></span>
           </Button>
           
+          <Button variant="ghost" size="icon" className="rounded-full" onClick={handleLogout}>
+            <LogOut className="h-5 w-5" />
+          </Button>
+          
           <div className="border-l h-6 mx-2 border-border"></div>
           
           <div className="flex items-center gap-3">
             <div className="hidden md:block text-sm text-right">
-              <div className="font-medium">Admin</div>
-              <div className="text-xs text-muted-foreground">admin@riverquality.my</div>
+              <div className="font-medium">{user?.name || 'User'}</div>
+              <div className="text-xs text-muted-foreground">{user?.email || 'user@riverquality.my'}</div>
             </div>
             <Avatar className="h-9 w-9 border-2 border-primary/20">
               <AvatarImage src="" />
-              <AvatarFallback className="bg-gradient-to-br from-blue-500 to-cyan-500 text-primary-foreground">MY</AvatarFallback>
+              <AvatarFallback className="bg-gradient-to-br from-blue-500 to-cyan-500 text-primary-foreground">
+                {user?.name?.charAt(0) || 'U'}
+              </AvatarFallback>
             </Avatar>
           </div>
         </div>
