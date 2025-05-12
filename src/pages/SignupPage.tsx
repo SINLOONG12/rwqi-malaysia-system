@@ -6,28 +6,34 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { UserPlus, Mail, Lock, User } from 'lucide-react';
+import { UserPlus, Mail, Lock, User, Google } from 'lucide-react';
 
 const SignupPage: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [name, setName] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState<boolean>(false);
   
-  const { signup, isAuthorized } = useAuth();
+  const { signup, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    if (!isAuthorized(email)) {
-      setIsSubmitting(false);
-      return; // Error toast will be shown by the signup function
-    }
-    
     const success = await signup(email, password, name);
     setIsSubmitting(false);
+    
+    if (success) {
+      navigate('/');
+    }
+  };
+  
+  const handleGoogleLogin = async () => {
+    setIsGoogleLoading(true);
+    const success = await loginWithGoogle();
+    setIsGoogleLoading(false);
     
     if (success) {
       navigate('/');
@@ -46,11 +52,34 @@ const SignupPage: React.FC = () => {
             </div>
             <CardTitle className="text-2xl">Create an Account</CardTitle>
             <CardDescription>
-              Enter your information to create an account
+              Enter your information or sign up with Google
             </CardDescription>
           </CardHeader>
-          <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-4">
+          
+          <CardContent className="space-y-4">
+            {/* Google Sign Up Button */}
+            <Button 
+              variant="outline" 
+              className="w-full flex items-center justify-center gap-2"
+              onClick={handleGoogleLogin}
+              disabled={isGoogleLoading}
+            >
+              <Google className="h-5 w-5" />
+              {isGoogleLoading ? "Signing up..." : "Sign up with Google"}
+            </Button>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Or continue with email
+                </span>
+              </div>
+            </div>
+            
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Name</Label>
                 <div className="relative">
@@ -71,7 +100,7 @@ const SignupPage: React.FC = () => {
                   <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                   <Input
                     id="email"
-                    placeholder="admin@riverquality.my"
+                    placeholder="example@gmail.com"
                     type="email"
                     autoCapitalize="none"
                     autoComplete="email"
@@ -83,8 +112,7 @@ const SignupPage: React.FC = () => {
                   />
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  Authorized emails: admin@riverquality.my, government@riverquality.my, 
-                  cleanup@riverquality.my, publisher@riverquality.my
+                  Authorized domains: gmail.com, moe-dl.edu.my, riverquality.my
                 </div>
               </div>
               <div className="space-y-2">
@@ -104,8 +132,6 @@ const SignupPage: React.FC = () => {
                   Password must be at least 6 characters
                 </div>
               </div>
-            </CardContent>
-            <CardFooter className="flex flex-col">
               <Button
                 type="submit"
                 className="w-full"
@@ -113,14 +139,17 @@ const SignupPage: React.FC = () => {
               >
                 {isSubmitting ? 'Creating Account...' : 'Create Account'}
               </Button>
-              <div className="mt-4 text-center text-sm">
-                Already have an account?{" "}
-                <Link to="/login" className="text-primary hover:underline">
-                  Sign in
-                </Link>
-              </div>
-            </CardFooter>
-          </form>
+            </form>
+          </CardContent>
+          
+          <CardFooter className="flex flex-col">
+            <div className="mt-4 text-center text-sm">
+              Already have an account?{" "}
+              <Link to="/login" className="text-primary hover:underline">
+                Sign in
+              </Link>
+            </div>
+          </CardFooter>
         </Card>
       </div>
     </div>

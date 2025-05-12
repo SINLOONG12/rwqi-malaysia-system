@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Bell, Search, LogOut } from 'lucide-react';
+import { Bell, Search, LogOut, Google } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -46,11 +46,11 @@ const Navbar: React.FC = () => {
           <div className="flex items-center gap-3">
             <div className="hidden md:block text-sm text-right">
               <div className="font-medium">{user?.name || 'User'}</div>
-              <div className="text-xs text-muted-foreground">{user?.email || 'user@riverquality.my'}</div>
+              <div className="text-xs text-muted-foreground">{user?.email || 'user@gmail.com'}</div>
             </div>
             <Avatar className="h-9 w-9 border-2 border-primary/20">
-              <AvatarImage src="" />
-              <AvatarFallback className="bg-gradient-to-br from-blue-500 to-cyan-500 text-primary-foreground">
+              <AvatarImage src={user?.photoURL || ""} />
+              <AvatarFallback className={`${user?.photoURL ? "" : "bg-gradient-to-br from-blue-500 to-cyan-500"} text-primary-foreground`}>
                 {user?.name?.charAt(0) || 'U'}
               </AvatarFallback>
             </Avatar>
