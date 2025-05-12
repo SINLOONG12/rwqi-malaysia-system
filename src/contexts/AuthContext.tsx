@@ -1,6 +1,6 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from "@/components/ui/sonner";
-import { Google } from "lucide-react";
 
 // List of authorized email domains that can access the system
 const AUTHORIZED_DOMAINS = [
