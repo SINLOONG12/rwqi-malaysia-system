@@ -20,6 +20,7 @@ import PredictiveAnalytics from '@/components/river-monitoring/PredictiveAnalyti
 import RiverQualityTrendChart from '@/components/river-monitoring/RiverQualityTrendChart';
 import RiverQualityDataTable from '@/components/river-monitoring/RiverQualityDataTable';
 import ReportGenerator from '@/components/river-monitoring/ReportGenerator';
+import NotificationCenter, { Notification } from '@/components/notifications/NotificationCenter';
 
 // Define a type for all possible user roles
 type UserRole = "government" | "cleanup" | "public" | "publisher";
@@ -76,6 +77,31 @@ const RiverMonitoringPage: React.FC = () => {
     });
   };
 
+  // Handle notification click
+  const handleNotificationClick = (notification: Notification) => {
+    // For report notifications, navigate to reports tab
+    if (notification.type === "report" && notification.reportId) {
+      setActiveTab("reports");
+      toast({
+        title: "Report Detail",
+        description: `Viewing details for report ${notification.reportId}`
+      });
+    } 
+    // For alert notifications, navigate to alerts tab
+    else if (notification.type === "alert" && notification.riverName) {
+      setActiveTab("alerts");
+      toast({
+        title: "Alert Detail",
+        description: `Viewing alert for ${notification.riverName}`
+      });
+    }
+    // For camera notifications, we would navigate to camera feed
+    else if (notification.type === "camera" && notification.cameraId) {
+      // In a real app, this would navigate to the camera feed page or section
+      window.open("/data-collection?tab=camera-feeds", "_blank");
+    }
+  };
+
   return (
     <div className="container max-w-7xl mx-auto py-8 px-4 sm:px-6">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
@@ -88,7 +114,13 @@ const RiverMonitoringPage: React.FC = () => {
           </p>
         </div>
         
-        <RoleSelector userRole={userRole} setUserRole={setUserRole} />
+        <div className="mt-4 md:mt-0 flex items-center gap-3">
+          <NotificationCenter 
+            userRole={userRole} 
+            onNotificationClick={handleNotificationClick}
+          />
+          <RoleSelector userRole={userRole} setUserRole={setUserRole} />
+        </div>
       </div>
 
       {/* Quick Actions with improved styling and functionality */}

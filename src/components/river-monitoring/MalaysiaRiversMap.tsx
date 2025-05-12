@@ -9,8 +9,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { MapPin, Filter } from 'lucide-react';
+import { MapPin, Filter, HelpCircle } from 'lucide-react';
 import { getRwqiColor, getUniqueLocations } from '@/utils/riverData';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface MalaysiaRiversMapProps {
   userRole: "government" | "cleanup" | "public" | "publisher";
@@ -93,10 +99,26 @@ const MalaysiaRiversMap: React.FC<MalaysiaRiversMapProps> = ({ userRole, onRiver
   return (
     <Card className="w-full">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="flex items-center">
-          <MapPin className="h-5 w-5 mr-2" />
-          Malaysian Rivers Interactive Map
-        </CardTitle>
+        <div className="flex items-center">
+          <CardTitle className="flex items-center">
+            <MapPin className="h-5 w-5 mr-2" />
+            Malaysian Rivers Interactive Map
+          </CardTitle>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 ml-2">
+                  <HelpCircle className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="max-w-xs">
+                  "Sungai" means "river" in Malay. The map shows major rivers across Malaysia with their pollution status.
+                </p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
         <div className="flex items-center space-x-2">
           <Button 
             size="sm" 
@@ -156,7 +178,7 @@ const MalaysiaRiversMap: React.FC<MalaysiaRiversMapProps> = ({ userRole, onRiver
                 >
                   <div className="relative">
                     <MapPin className={`h-6 w-6 ${getStatusColor(coords.status)}`} />
-                    <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-background animate-pulse ${getStatusBgColor(coords.status)}"></span>
+                    <span className={`absolute -top-1 -right-1 w-3 h-3 rounded-full border-2 border-background animate-pulse ${getStatusBgColor(coords.status)}`}></span>
                   </div>
                 </div>
               );
@@ -180,6 +202,14 @@ const MalaysiaRiversMap: React.FC<MalaysiaRiversMapProps> = ({ userRole, onRiver
                 <span className="text-xs">Good</span>
               </div>
             </div>
+          </div>
+          
+          {/* Additional info about "Sungai" */}
+          <div className="absolute top-4 left-4 bg-background/90 p-3 rounded-md border border-border shadow-sm max-w-xs">
+            <p className="text-sm font-medium mb-1">About Malaysian Rivers</p>
+            <p className="text-xs text-muted-foreground">
+              "Sungai" is the Malay word for "river". Malaysia has over 150 river systems, with 100 in Peninsular Malaysia and 50 in East Malaysia (Sabah and Sarawak).
+            </p>
           </div>
         </div>
 
