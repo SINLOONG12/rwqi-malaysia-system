@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   ChartBar,
@@ -28,6 +28,7 @@ const RiverMonitoringPage: React.FC = () => {
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState("overview");
   const [userRole, setUserRole] = useState<UserRole>("government");
+  const [quickActionIsVisible, setQuickActionIsVisible] = useState<boolean>(true);
   
   // Get today's data (using the latest date available)
   const latestDate = riverQualityData.reduce((latest, current) => {
@@ -57,9 +58,22 @@ const RiverMonitoringPage: React.FC = () => {
     });
   };
 
-  // Handle quick action navigation
+  // Handle quick action navigation with improved functionality
   const handleQuickAction = (tabId: string) => {
     setActiveTab(tabId);
+    
+    // Scroll to the tab content
+    setTimeout(() => {
+      const tabElement = document.querySelector(`[data-tab="${tabId}"]`);
+      if (tabElement) {
+        tabElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    }, 100);
+    
+    toast({
+      title: `${tabId.charAt(0).toUpperCase() + tabId.slice(1)} View`,
+      description: `Switched to ${tabId} view successfully.`,
+    });
   };
 
   return (
@@ -77,53 +91,67 @@ const RiverMonitoringPage: React.FC = () => {
         <RoleSelector userRole={userRole} setUserRole={setUserRole} />
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-3 mb-8">
-        <button 
-          className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 text-blue-700 dark:text-blue-300 p-4 rounded-xl flex flex-col items-center text-xs font-medium hover:shadow-md transition-all"
-          onClick={() => handleQuickAction("map")}
-        >
-          <div className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-lg mb-2">
-            <Map className="h-5 w-5" />
+      {/* Quick Actions with improved styling and functionality */}
+      <div className={`${quickActionIsVisible ? 'mb-8' : 'mb-0'}`}>
+        <div className="flex justify-between items-center mb-3">
+          <h2 className="text-lg font-medium">Quick Actions</h2>
+          <button 
+            className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+            onClick={() => setQuickActionIsVisible(!quickActionIsVisible)}
+          >
+            {quickActionIsVisible ? 'Hide' : 'Show'}
+          </button>
+        </div>
+        
+        {quickActionIsVisible && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            <button 
+              className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 text-blue-700 dark:text-blue-300 p-4 rounded-xl flex flex-col items-center text-xs font-medium hover:shadow-md transition-all active:scale-95"
+              onClick={() => handleQuickAction("map")}
+            >
+              <div className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-lg mb-2">
+                <Map className="h-5 w-5" />
+              </div>
+              View Map
+            </button>
+            <button 
+              className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 text-red-700 dark:text-red-300 p-4 rounded-xl flex flex-col items-center text-xs font-medium hover:shadow-md transition-all active:scale-95"
+              onClick={() => handleQuickAction("alerts")}
+            >
+              <div className="bg-red-100 dark:bg-red-900/30 p-2 rounded-lg mb-2">
+                <Bell className="h-5 w-5" />
+              </div>
+              Alerts
+            </button>
+            <button 
+              className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 text-green-700 dark:text-green-300 p-4 rounded-xl flex flex-col items-center text-xs font-medium hover:shadow-md transition-all active:scale-95"
+              onClick={() => handleQuickAction("historical")}
+            >
+              <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-lg mb-2">
+                <History className="h-5 w-5" />
+              </div>
+              Historical Data
+            </button>
+            <button 
+              className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 text-purple-700 dark:text-purple-300 p-4 rounded-xl flex flex-col items-center text-xs font-medium hover:shadow-md transition-all active:scale-95"
+              onClick={() => handleQuickAction("analytics")}
+            >
+              <div className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-lg mb-2">
+                <Database className="h-5 w-5" />
+              </div>
+              Analytics
+            </button>
+            <button 
+              className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 text-amber-700 dark:text-amber-300 p-4 rounded-xl flex flex-col items-center text-xs font-medium hover:shadow-md transition-all active:scale-95"
+              onClick={() => handleQuickAction("reports")}
+            >
+              <div className="bg-amber-100 dark:bg-amber-900/30 p-2 rounded-lg mb-2">
+                <FileText className="h-5 w-5" />
+              </div>
+              Reports
+            </div>
           </div>
-          View Map
-        </button>
-        <button 
-          className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 text-red-700 dark:text-red-300 p-4 rounded-xl flex flex-col items-center text-xs font-medium hover:shadow-md transition-all"
-          onClick={() => handleQuickAction("alerts")}
-        >
-          <div className="bg-red-100 dark:bg-red-900/30 p-2 rounded-lg mb-2">
-            <Bell className="h-5 w-5" />
-          </div>
-          Alerts
-        </button>
-        <button 
-          className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 text-green-700 dark:text-green-300 p-4 rounded-xl flex flex-col items-center text-xs font-medium hover:shadow-md transition-all"
-          onClick={() => handleQuickAction("historical")}
-        >
-          <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-lg mb-2">
-            <History className="h-5 w-5" />
-          </div>
-          Historical Data
-        </button>
-        <button 
-          className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 text-purple-700 dark:text-purple-300 p-4 rounded-xl flex flex-col items-center text-xs font-medium hover:shadow-md transition-all"
-          onClick={() => handleQuickAction("analytics")}
-        >
-          <div className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-lg mb-2">
-            <Database className="h-5 w-5" />
-          </div>
-          Analytics
-        </button>
-        <button 
-          className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 text-amber-700 dark:text-amber-300 p-4 rounded-xl flex flex-col items-center text-xs font-medium hover:shadow-md transition-all"
-          onClick={() => handleQuickAction("reports")}
-        >
-          <div className="bg-amber-100 dark:bg-amber-900/30 p-2 rounded-lg mb-2">
-            <FileText className="h-5 w-5" />
-          </div>
-          Reports
-        </button>
+        )}
       </div>
 
       <div className="bg-card rounded-xl shadow-sm border">
@@ -157,7 +185,7 @@ const RiverMonitoringPage: React.FC = () => {
           
           <div className="p-6">
             {/* Overview Tab Content */}
-            <TabsContent value="overview">
+            <TabsContent value="overview" data-tab="overview">
               <OverviewTab 
                 userRole={userRole}
                 lowestRwqiLocation={lowestRwqiLocation}
@@ -168,7 +196,7 @@ const RiverMonitoringPage: React.FC = () => {
             </TabsContent>
             
             {/* Map Tab Content */}
-            <TabsContent value="map">
+            <TabsContent value="map" data-tab="map">
               <div className="space-y-8">
                 <MalaysiaRiversMap userRole={userRole} />
                 <RiverMonitoringMap userRole={userRole} />
@@ -176,22 +204,22 @@ const RiverMonitoringPage: React.FC = () => {
             </TabsContent>
             
             {/* Alerts Tab Content */}
-            <TabsContent value="alerts">
+            <TabsContent value="alerts" data-tab="alerts">
               <AlertsNotifications userRole={userRole} />
             </TabsContent>
             
             {/* Analytics Tab Content */}
-            <TabsContent value="analytics">
+            <TabsContent value="analytics" data-tab="analytics">
               <PredictiveAnalytics userRole={userRole} />
             </TabsContent>
             
             {/* Historical Data Tab Content */}
-            <TabsContent value="historical">
+            <TabsContent value="historical" data-tab="historical">
               <HistoricalDataTab onDownloadReport={handleDownloadReport} />
             </TabsContent>
 
             {/* Reports Tab Content */}
-            <TabsContent value="reports">
+            <TabsContent value="reports" data-tab="reports">
               <ReportGenerator userRole={userRole} />
             </TabsContent>
           </div>

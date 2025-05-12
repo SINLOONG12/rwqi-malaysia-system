@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from "@/components/ui/sonner";
 
@@ -14,7 +13,9 @@ type User = {
   email: string;
   name: string;
   role: "government" | "cleanup" | "public" | "publisher";
-  photoURL?: string; // Optional for Google accounts
+  photoURL?: string;
+  organization?: string;
+  position?: string;
 };
 
 type AuthContextType = {
@@ -25,6 +26,7 @@ type AuthContextType = {
   signup: (email: string, password: string, name: string) => Promise<boolean>;
   logout: () => void;
   isAuthorized: (email: string) => boolean;
+  updateProfile: (profileData: Partial<User>) => Promise<boolean>;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -100,7 +102,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
   
-  // Google login simulation
+  // Updated Google login simulation with organization and position
   const loginWithGoogle = async (): Promise<boolean> => {
     setLoading(true);
     
@@ -108,24 +110,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // In a real app, this would interact with Google Auth API
       // For this demo, we'll simulate a successful Google login with mock data
       
-      // Generate a mock Google email (alternating between domains for demo purposes)
-      const domains = ['gmail.com', 'moe-dl.edu.my'];
+      // Generate mock Google account data
+      const domains = ['gmail.com', 'moe-dl.edu.my', 'riverquality.my'];
       const randomDomain = domains[Math.floor(Math.random() * domains.length)];
       const randomName = `user${Math.floor(Math.random() * 1000)}`;
       const mockEmail = `${randomName}@${randomDomain}`;
       
-      // Create a mock user from the Google account
+      // Organizations based on domain
+      const organizations = {
+        'gmail.com': ['River Conservation Group', 'Water Quality Initiative', 'Environmental Protection Team'],
+        'moe-dl.edu.my': ['Department of Education', 'School of Environmental Studies', 'Research Institute'],
+        'riverquality.my': ['River Quality Authority', 'Water Management Division', 'Environmental Monitoring Unit']
+      };
+      
+      // Positions based on role
+      const positions = {
+        'government': ['Water Quality Manager', 'Environmental Officer', 'Policy Coordinator'],
+        'cleanup': ['Field Coordinator', 'Cleanup Team Leader', 'Volunteer Manager'],
+        'publisher': ['Content Editor', 'Data Analyst', 'Reports Manager'],
+        'public': ['Community Member', 'Concerned Citizen', 'Volunteer']
+      };
+      
+      const role = determineUserRole(mockEmail);
+      const organization = organizations[randomDomain as keyof typeof organizations][Math.floor(Math.random() * 3)];
+      const position = positions[role][Math.floor(Math.random() * 3)];
+      
+      // Create a mock user from the Google account with organization and position
       const newUser: User = {
         id: Math.random().toString(36).substring(2, 15),
         email: mockEmail,
         name: randomName,
-        role: determineUserRole(mockEmail),
-        photoURL: `https://ui-avatars.com/api/?name=${randomName}&background=random`
+        role: role,
+        photoURL: `https://ui-avatars.com/api/?name=${randomName}&background=random`,
+        organization: organization,
+        position: position
       };
       
       setUser(newUser);
       localStorage.setItem('user', JSON.stringify(newUser));
       toast.success("Google login successful");
+      
+      console.log("Logged in with Google:", newUser);
       setLoading(false);
       return true;
     } catch (error) {
@@ -175,6 +200,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
   
+  // Add profile update functionality
+  const updateProfile = async (profileData: Partial<User>): Promise<boolean> => {
+    try {
+      if (user) {
+        const updatedUser = { ...user, ...profileData };
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        toast.success("Profile updated successfully");
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Profile update error:', error);
+      toast.error("Failed to update profile");
+      return false;
+    }
+  };
+  
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
@@ -182,7 +225,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
   
   return (
-    <AuthContext.Provider value={{ user, loading, login, loginWithGoogle, signup, logout, isAuthorized }}>
+    <AuthContext.Provider value={{ user, loading, login, loginWithGoogle, signup, logout, isAuthorized, updateProfile }}>
       {children}
     </AuthContext.Provider>
   );

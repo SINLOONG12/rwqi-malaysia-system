@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -39,6 +39,16 @@ const LoginPage: React.FC = () => {
       navigate('/');
     }
   };
+
+  // Auto-trigger Google login if the URL has a google_login parameter
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const autoLogin = urlParams.get('google_login');
+    
+    if (autoLogin === 'true') {
+      handleGoogleLogin();
+    }
+  }, []);
   
   return (
     <div className="flex min-h-screen items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-slate-900 dark:to-slate-800">
@@ -57,10 +67,9 @@ const LoginPage: React.FC = () => {
           </CardHeader>
           
           <CardContent className="space-y-4">
-            {/* Google Sign In Button */}
+            {/* Google Sign In Button - Updated with more prominent styling */}
             <Button 
-              variant="outline" 
-              className="w-full flex items-center justify-center gap-2" 
+              className="w-full flex items-center justify-center gap-2 bg-white text-gray-700 border hover:bg-gray-100 hover:shadow-md transition-all" 
               onClick={handleGoogleLogin}
               disabled={isGoogleLoading}
             >
@@ -139,6 +148,9 @@ const LoginPage: React.FC = () => {
               <Link to="/signup" className="text-primary hover:underline">
                 Sign up
               </Link>
+            </div>
+            <div className="text-center text-xs mt-2 text-muted-foreground">
+              <a href="?google_login=true" className="hover:underline">Click here for one-click Google login</a>
             </div>
           </CardFooter>
         </Card>

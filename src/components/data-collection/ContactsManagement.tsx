@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -5,9 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Users, User, Send, Link } from 'lucide-react';
+import { Users, User, Send, Mail, Upload, File, Calendar } from 'lucide-react';
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 interface Contact {
   id: string;
@@ -37,6 +40,21 @@ const ContactsManagement: React.FC = () => {
   });
   
   const [filter, setFilter] = useState("all");
+  const [showEmailDialog, setShowEmailDialog] = useState(false);
+  const [emailData, setEmailData] = useState({
+    to: "",
+    subject: "",
+    message: "",
+    files: null as File[] | null
+  });
+  const [showScheduleDialog, setShowScheduleDialog] = useState(false);
+  const [scheduleData, setScheduleData] = useState({
+    to: "",
+    date: "",
+    location: "",
+    details: "",
+    files: null as File[] | null
+  });
   
   const handleAddContact = (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,10 +90,59 @@ const ContactsManagement: React.FC = () => {
   };
   
   const handleSendSchedule = (contact: Contact) => {
-    toast({
-      title: "Schedule Shared",
-      description: `Cleanup schedule has been shared with ${contact.name}.`,
+    setScheduleData({
+      ...scheduleData,
+      to: contact.email
     });
+    setShowScheduleDialog(true);
+  };
+  
+  const handleSubmitSchedule = () => {
+    toast({
+      title: "Schedule Sent",
+      description: `Cleanup schedule has been sent to ${scheduleData.to}.`,
+    });
+    setShowScheduleDialog(false);
+    setScheduleData({
+      to: "",
+      date: "",
+      location: "",
+      details: "",
+      files: null
+    });
+  };
+
+  const handleContact = (contact: Contact) => {
+    setEmailData({
+      ...emailData,
+      to: contact.email
+    });
+    setShowEmailDialog(true);
+  };
+  
+  const handleSubmitEmail = () => {
+    toast({
+      title: "Email Sent",
+      description: `Your message has been sent to ${emailData.to}.`,
+    });
+    setShowEmailDialog(false);
+    setEmailData({
+      to: "",
+      subject: "",
+      message: "",
+      files: null
+    });
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'email' | 'schedule') => {
+    if (e.target.files) {
+      const filesArray = Array.from(e.target.files);
+      if (type === 'email') {
+        setEmailData({ ...emailData, files: filesArray });
+      } else {
+        setScheduleData({ ...scheduleData, files: filesArray });
+      }
+    }
   };
   
   const filteredContacts = filter === "all" 
@@ -137,12 +204,16 @@ const ContactsManagement: React.FC = () => {
                         className="flex items-center gap-2"
                         onClick={() => handleSendSchedule(contact)}
                       >
-                        <Send className="h-4 w-4" />
+                        <Calendar className="h-4 w-4" />
                         Send Schedule
                       </Button>
                     )}
-                    <Button size="sm" className="flex items-center gap-2">
-                      <Link className="h-4 w-4" />
+                    <Button 
+                      size="sm" 
+                      className="flex items-center gap-2"
+                      onClick={() => handleContact(contact)}
+                    >
+                      <Mail className="h-4 w-4" />
                       Contact
                     </Button>
                   </div>
@@ -227,6 +298,159 @@ const ContactsManagement: React.FC = () => {
           </form>
         </CardContent>
       </Card>
+
+      {/* Email Composition Dialog */}
+      <Dialog open={showEmailDialog} onOpenChange={setShowEmailDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Send Email</DialogTitle>
+            <DialogDescription>
+              Compose your email message below.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="email-to">To</Label>
+              <Input 
+                id="email-to" 
+                value={emailData.to} 
+                onChange={(e) => setEmailData({...emailData, to: e.target.value})}
+                placeholder="recipient@gmail.com"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="email-subject">Subject</Label>
+              <Input 
+                id="email-subject" 
+                value={emailData.subject} 
+                onChange={(e) => setEmailData({...emailData, subject: e.target.value})}
+                placeholder="Email subject"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="email-message">Message</Label>
+              <Textarea 
+                id="email-message" 
+                value={emailData.message} 
+                onChange={(e) => setEmailData({...emailData, message: e.target.value})}
+                placeholder="Type your message here..."
+                className="min-h-[120px]"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="email-files">Attachments</Label>
+              <div className="flex items-center gap-2">
+                <Input 
+                  id="email-files" 
+                  type="file" 
+                  className="hidden"
+                  onChange={(e) => handleFileChange(e, 'email')}
+                  multiple
+                />
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  onClick={() => document.getElementById('email-files')?.click()}
+                  className="w-full flex items-center justify-center gap-2"
+                >
+                  <Upload className="h-4 w-4" />
+                  Browse Files
+                </Button>
+              </div>
+              {emailData.files && emailData.files.length > 0 && (
+                <div className="text-sm text-muted-foreground mt-1">
+                  {emailData.files.length} file(s) selected
+                </div>
+              )}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowEmailDialog(false)}>Cancel</Button>
+            <Button type="submit" onClick={handleSubmitEmail}>Send Email</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Schedule Dialog */}
+      <Dialog open={showScheduleDialog} onOpenChange={setShowScheduleDialog}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Send Cleanup Schedule</DialogTitle>
+            <DialogDescription>
+              Provide schedule details and upload any relevant files.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="schedule-to">Recipient</Label>
+              <Input 
+                id="schedule-to" 
+                value={scheduleData.to} 
+                onChange={(e) => setScheduleData({...scheduleData, to: e.target.value})}
+                placeholder="recipient@cleanup.org"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="schedule-date">Scheduled Date</Label>
+              <Input 
+                id="schedule-date" 
+                type="date"
+                value={scheduleData.date} 
+                onChange={(e) => setScheduleData({...scheduleData, date: e.target.value})}
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="schedule-location">Location</Label>
+              <Input 
+                id="schedule-location" 
+                value={scheduleData.location} 
+                onChange={(e) => setScheduleData({...scheduleData, location: e.target.value})}
+                placeholder="Cleanup location"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="schedule-details">Details</Label>
+              <Textarea 
+                id="schedule-details" 
+                value={scheduleData.details} 
+                onChange={(e) => setScheduleData({...scheduleData, details: e.target.value})}
+                placeholder="Enter schedule details..."
+                className="min-h-[100px]"
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="schedule-files">Upload Schedule Files</Label>
+              <div className="flex items-center gap-2">
+                <Input 
+                  id="schedule-files" 
+                  type="file" 
+                  className="hidden"
+                  onChange={(e) => handleFileChange(e, 'schedule')}
+                  multiple
+                />
+                <Button 
+                  type="button" 
+                  variant="outline"
+                  onClick={() => document.getElementById('schedule-files')?.click()}
+                  className="w-full flex items-center justify-center gap-2"
+                >
+                  <Upload className="h-4 w-4" />
+                  Browse Files
+                </Button>
+              </div>
+              {scheduleData.files && scheduleData.files.length > 0 && (
+                <div className="text-sm text-muted-foreground mt-1">
+                  {scheduleData.files.length} file(s) selected
+                </div>
+              )}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowScheduleDialog(false)}>Cancel</Button>
+            <Button type="submit" onClick={handleSubmitSchedule}>Send Schedule</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
