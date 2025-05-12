@@ -149,7 +149,7 @@ const RiverMonitoringPage: React.FC = () => {
                 <FileText className="h-5 w-5" />
               </div>
               Reports
-            </div>
+            </button>
           </div>
         )}
       </div>
