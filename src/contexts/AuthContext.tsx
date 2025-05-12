@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { toast } from "@/components/ui/sonner";
 import { Google } from "lucide-react";

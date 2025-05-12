@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Bell, Search, LogOut, Google } from 'lucide-react';
+import { Bell, Search, LogOut } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
