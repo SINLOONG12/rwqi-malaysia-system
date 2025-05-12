@@ -1,26 +1,11 @@
 
-import React, { useState, useEffect } from 'react';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  ChartBar,
-  Map,
-  Bell,
-  Database,
-  History,
-  FileText
-} from 'lucide-react';
+import React, { useState } from 'react';
 import { riverQualityData } from '@/utils/riverData';
 import { useToast } from "@/hooks/use-toast";
-import RoleSelector from '@/components/river-monitoring/RoleSelector';
-import OverviewTab from '@/components/river-monitoring/OverviewTab';
-import RiverMonitoringMap from '@/components/river-monitoring/RiverMonitoringMap';
-import MalaysiaRiversMap from '@/components/river-monitoring/MalaysiaRiversMap';
-import AlertsNotifications from '@/components/river-monitoring/AlertsNotifications';
-import PredictiveAnalytics from '@/components/river-monitoring/PredictiveAnalytics';
-import RiverQualityTrendChart from '@/components/river-monitoring/RiverQualityTrendChart';
-import RiverQualityDataTable from '@/components/river-monitoring/RiverQualityDataTable';
-import ReportGenerator from '@/components/river-monitoring/ReportGenerator';
-import NotificationCenter, { Notification } from '@/components/notifications/NotificationCenter';
+import { Notification } from '@/components/notifications/NotificationCenter';
+import PageHeader from '@/components/river-monitoring/page-components/PageHeader';
+import QuickActions from '@/components/river-monitoring/page-components/QuickActions';
+import TabContent from '@/components/river-monitoring/tabs/TabContent';
 
 // Define a type for all possible user roles
 type UserRole = "government" | "cleanup" | "public" | "publisher";
@@ -104,201 +89,27 @@ const RiverMonitoringPage: React.FC = () => {
 
   return (
     <div className="container max-w-7xl mx-auto py-8 px-4 sm:px-6">
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-blue-500">
-            Malaysian River Water Quality Index
-          </h1>
-          <p className="text-muted-foreground mt-2">
-            Real-time monitoring of river conditions and pollution detection across Malaysia
-          </p>
-        </div>
-        
-        <div className="mt-4 md:mt-0 flex items-center gap-3">
-          <NotificationCenter 
-            userRole={userRole} 
-            onNotificationClick={handleNotificationClick}
-          />
-          <RoleSelector userRole={userRole} setUserRole={setUserRole} />
-        </div>
-      </div>
-
-      {/* Quick Actions with improved styling and functionality */}
-      <div className={`${quickActionIsVisible ? 'mb-8' : 'mb-0'}`}>
-        <div className="flex justify-between items-center mb-3">
-          <h2 className="text-lg font-medium">Quick Actions</h2>
-          <button 
-            className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-            onClick={() => setQuickActionIsVisible(!quickActionIsVisible)}
-          >
-            {quickActionIsVisible ? 'Hide' : 'Show'}
-          </button>
-        </div>
-        
-        {quickActionIsVisible && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-            <button 
-              className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 text-blue-700 dark:text-blue-300 p-4 rounded-xl flex flex-col items-center text-xs font-medium hover:shadow-md transition-all active:scale-95"
-              onClick={() => handleQuickAction("map")}
-            >
-              <div className="bg-blue-100 dark:bg-blue-900/30 p-2 rounded-lg mb-2">
-                <Map className="h-5 w-5" />
-              </div>
-              View Map
-            </button>
-            <button 
-              className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 text-red-700 dark:text-red-300 p-4 rounded-xl flex flex-col items-center text-xs font-medium hover:shadow-md transition-all active:scale-95"
-              onClick={() => handleQuickAction("alerts")}
-            >
-              <div className="bg-red-100 dark:bg-red-900/30 p-2 rounded-lg mb-2">
-                <Bell className="h-5 w-5" />
-              </div>
-              Alerts
-            </button>
-            <button 
-              className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 text-green-700 dark:text-green-300 p-4 rounded-xl flex flex-col items-center text-xs font-medium hover:shadow-md transition-all active:scale-95"
-              onClick={() => handleQuickAction("historical")}
-            >
-              <div className="bg-green-100 dark:bg-green-900/30 p-2 rounded-lg mb-2">
-                <History className="h-5 w-5" />
-              </div>
-              Historical Data
-            </button>
-            <button 
-              className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 text-purple-700 dark:text-purple-300 p-4 rounded-xl flex flex-col items-center text-xs font-medium hover:shadow-md transition-all active:scale-95"
-              onClick={() => handleQuickAction("analytics")}
-            >
-              <div className="bg-purple-100 dark:bg-purple-900/30 p-2 rounded-lg mb-2">
-                <Database className="h-5 w-5" />
-              </div>
-              Analytics
-            </button>
-            <button 
-              className="bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 text-amber-700 dark:text-amber-300 p-4 rounded-xl flex flex-col items-center text-xs font-medium hover:shadow-md transition-all active:scale-95"
-              onClick={() => handleQuickAction("reports")}
-            >
-              <div className="bg-amber-100 dark:bg-amber-900/30 p-2 rounded-lg mb-2">
-                <FileText className="h-5 w-5" />
-              </div>
-              Reports
-            </button>
-          </div>
-        )}
-      </div>
-
-      <div className="bg-card rounded-xl shadow-sm border">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="bg-muted/50 p-1 rounded-t-xl grid grid-cols-6 h-auto">
-            <TabsTrigger value="overview" className="flex items-center gap-2 py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm">
-              <ChartBar className="h-4 w-4" />
-              <span>Overview</span>
-            </TabsTrigger>
-            <TabsTrigger value="map" className="flex items-center gap-2 py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm">
-              <Map className="h-4 w-4" />
-              <span>Interactive Map</span>
-            </TabsTrigger>
-            <TabsTrigger value="alerts" className="flex items-center gap-2 py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm">
-              <Bell className="h-4 w-4" />
-              <span>Alerts</span>
-            </TabsTrigger>
-            <TabsTrigger value="analytics" className="flex items-center gap-2 py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm">
-              <Database className="h-4 w-4" />
-              <span>Analytics</span>
-            </TabsTrigger>
-            <TabsTrigger value="historical" className="flex items-center gap-2 py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm">
-              <History className="h-4 w-4" />
-              <span>Historical Data</span>
-            </TabsTrigger>
-            <TabsTrigger value="reports" className="flex items-center gap-2 py-3 data-[state=active]:bg-background data-[state=active]:shadow-sm">
-              <FileText className="h-4 w-4" />
-              <span>Reports</span>
-            </TabsTrigger>
-          </TabsList>
-          
-          <div className="p-6">
-            {/* Overview Tab Content */}
-            <TabsContent value="overview" data-tab="overview">
-              <OverviewTab 
-                userRole={userRole}
-                lowestRwqiLocation={lowestRwqiLocation}
-                latestDate={latestDate}
-                onDownloadReport={handleDownloadReport}
-                onSubmitFeedback={handleSubmitFeedback}
-              />
-            </TabsContent>
-            
-            {/* Map Tab Content */}
-            <TabsContent value="map" data-tab="map">
-              <div className="space-y-8">
-                <MalaysiaRiversMap userRole={userRole} />
-                <RiverMonitoringMap userRole={userRole} />
-              </div>
-            </TabsContent>
-            
-            {/* Alerts Tab Content */}
-            <TabsContent value="alerts" data-tab="alerts">
-              <AlertsNotifications userRole={userRole} />
-            </TabsContent>
-            
-            {/* Analytics Tab Content */}
-            <TabsContent value="analytics" data-tab="analytics">
-              <PredictiveAnalytics userRole={userRole} />
-            </TabsContent>
-            
-            {/* Historical Data Tab Content */}
-            <TabsContent value="historical" data-tab="historical">
-              <HistoricalDataTab onDownloadReport={handleDownloadReport} />
-            </TabsContent>
-
-            {/* Reports Tab Content */}
-            <TabsContent value="reports" data-tab="reports">
-              <ReportGenerator userRole={userRole} />
-            </TabsContent>
-          </div>
-        </Tabs>
-      </div>
-    </div>
-  );
-};
-
-// We'll keep the HistoricalDataTab component inline since it's relatively simple
-const HistoricalDataTab: React.FC<{ onDownloadReport: () => void }> = ({ onDownloadReport }) => {
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="flex items-center text-2xl font-semibold">
-          <History className="h-5 w-5 mr-2 text-blue-600" />
-          Historical River Quality Trends
-        </h3>
-      </div>
+      <PageHeader 
+        userRole={userRole} 
+        setUserRole={setUserRole}
+        onNotificationClick={handleNotificationClick} 
+      />
       
-      <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
-        <h3 className="font-medium mb-3">Data Access Options</h3>
-        <div className="flex flex-wrap gap-3">
-          <button className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors flex items-center gap-2 shadow-sm" 
-            onClick={onDownloadReport}>
-            Download CSV
-          </button>
-          <button className="px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors flex items-center gap-2 shadow-sm" 
-            onClick={onDownloadReport}>
-            Download PDF Report
-          </button>
-          <button className="px-4 py-2 bg-background border rounded-lg text-sm font-medium hover:bg-muted/50 transition-colors flex items-center gap-2">
-            API Access
-          </button>
-          <button className="px-4 py-2 bg-background border rounded-lg text-sm font-medium hover:bg-muted/50 transition-colors flex items-center gap-2">
-            Raw Sensor Data
-          </button>
-        </div>
-      </div>
-      
-      <div className="bg-card rounded-xl border p-6 shadow-sm">
-        <RiverQualityTrendChart />
-      </div>
-      
-      <div className="bg-card rounded-xl border p-6 shadow-sm">
-        <RiverQualityDataTable />
-      </div>
+      <QuickActions 
+        visible={quickActionIsVisible}
+        setVisible={setQuickActionIsVisible}
+        onQuickAction={handleQuickAction}
+      />
+
+      <TabContent 
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        userRole={userRole}
+        lowestRwqiLocation={lowestRwqiLocation}
+        latestDate={latestDate}
+        onDownloadReport={handleDownloadReport}
+        onSubmitFeedback={handleSubmitFeedback}
+      />
     </div>
   );
 };
